@@ -22,8 +22,8 @@ A minimal Sway rice for Arch Linux and Debian.
 ## Installation
 
 ```bash
-curl -fsSL https://gitlab.com/alaminedion/id-86/-/archive/v2.0/id-86-v2.0.tar.gz | tar xz -C /tmp \
-  && cd /tmp/id-86-v2.0 && chmod +x setup.sh && ./setup.sh
+curl -fsSL https://github.com/noobmaisfier/A28/archive/refs/heads/main.tar.gz | tar xz -C /tmp \
+  && cd /tmp/A28-main && chmod +x setup.sh && ./setup.sh
 ```
 
 During the installation, two questions are asked:
@@ -78,6 +78,10 @@ Its source is vendored in `dotfiles/share/shell/kumi/` and installed to
 `~/.local/share/shell/kumi`; `setup.sh` replaces that copy on every install
 (backup in `~/.backup-id-86/<date>/share-shell`) and rebuilds it if needed.
 
+To modify or extend kumi, see the upstream docs:
+- [kumizo Guide](https://github.com/noobmaisfier/kumizo/blob/main/docs/guide.md)
+- [kumizo API](https://github.com/noobmaisfier/kumizo/blob/main/docs/api.md)
+
 After editing the source, rebuild and restart the shell:
 
 ```bash
@@ -115,6 +119,6 @@ Media keys go through MPRIS (`playerctl play-pause`, for example).
 
 ## Links
 
-- Releases: https://gitlab.com/alaminedion/id-86/-/releases
+- Releases: https://github.com/noobmaisfier/A28/releases
 - Shell: `kumi`, `kumizo`, `kumi-lockscreen`, built from the vendored
   source in `dotfiles/share/shell/kumi` and installed in `~/.local/bin`.
