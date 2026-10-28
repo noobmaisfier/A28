@@ -1,11 +1,11 @@
-# id-86
+# A28
 
 Light, fast, focused.
 A minimal Sway rice for Arch Linux and Debian.
 
 ## Screenshots
 
-![id-86 demo](screenshots/demo.webp)
+![A28 demo](screenshots/demo.webp)
 
 <details>
 <summary>All screenshots</summary>
@@ -50,7 +50,7 @@ nvim plugins + Mason, sway reload, XDG directories.
 
 `me.sh` is `setup.sh` plus my personal stuff. It is not run by default.
 
-Existing configs are backed up to `~/.backup-id-86/<date>`.
+Existing configs are backed up to `~/.backup-A28/<date>`.
 
 ## Themes
 
@@ -76,7 +76,7 @@ padding and keybind changes still need a restart.
 The shell is built on the [kumizo](https://github.com/noobmaisfier/kumizo) SDK.
 Its source is vendored in `dotfiles/share/shell/kumi/` and installed to
 `~/.local/share/shell/kumi`; `setup.sh` replaces that copy on every install
-(backup in `~/.backup-id-86/<date>/share-shell`) and rebuilds it if needed.
+(backup in `~/.backup-A28/<date>/share-shell`) and rebuilds it if needed.
 
 To modify or extend kumi, see the upstream docs:
 - [kumizo Guide](https://github.com/noobmaisfier/kumizo/blob/main/docs/GUIDE.md)
@@ -97,10 +97,10 @@ the shell's picker (`Super+Shift+t`); the choice is saved in
 ## Secrets
 
 API keys are not in the repository. They live in
-`~/.config/id-86/secrets.sh`, loaded by `.zshrc`:
+`~/.config/A28/secrets.sh`, loaded by `.zshrc`:
 
 ```bash
-[ -f "$HOME/.config/id-86/secrets.sh" ] && . "$HOME/.config/id-86/secrets.sh"
+[ -f "$HOME/.config/A28/secrets.sh" ] && . "$HOME/.config/A28/secrets.sh"
 ```
 
 The repository is public: never commit a key. `.gitignore` excludes
@@ -119,6 +119,5 @@ Media keys go through MPRIS (`playerctl play-pause`, for example).
 
 ## Links
 
-- Releases: https://github.com/noobmaisfier/A28/releases
 - Shell: `kumi`, `kumizo`, `kumi-lockscreen`, built from the vendored
   source in `dotfiles/share/shell/kumi` and installed in `~/.local/bin`.
