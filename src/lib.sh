@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# id-86 - shared module library: distro + package install.
+# A28 - shared module library: distro + package install.
 # ID86_DISTRO: arch | debian (auto via /etc/os-release, can be forced manually).
 # apt is intentionally tolerant: an unknown name does not cancel the rest
 # (package names vary across Debian versions).

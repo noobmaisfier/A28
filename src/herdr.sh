@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# id-86 - herdr: installs via the official script (binary in ~/.local/bin).
+# A28 - herdr: installs via the official script (binary in ~/.local/bin).
 set -euo pipefail
 
 echo "==> Installing herdr..."

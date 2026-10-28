@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# id-86 - personal part: the rice (setup.sh) + the author's apps and habits.
+# A28 - personal part: the rice (setup.sh) + the author's apps and habits.
 # Usage: ./me.sh (Arch recommended; Debian: best effort, some
 # packages do not exist outside the AUR).
 set -e
@@ -10,7 +10,7 @@ bash "$SCRIPT_DIR/setup.sh" || exit 1
 # shellcheck disable=SC1091
 . "$SCRIPT_DIR/src/lib.sh"
 
-echo "==> id-86 personal (distro: $ID86_DISTRO)"
+echo "==> A28 personal (distro: $ID86_DISTRO)"
 
 if [[ "$ID86_DISTRO" == debian ]]; then
     pkg_deb telegram-desktop mpv yt-dlp galculator atril golang \

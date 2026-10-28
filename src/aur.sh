@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# id-86 - AUR packages (Arch only; skipped on Debian).
+# A28 - AUR packages (Arch only; skipped on Debian).
 # The personal AUR packages (helium, megasync...) are in me.sh.
 set -euo pipefail
 

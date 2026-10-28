@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# id-86 - bluetooth (Arch + Debian, systemd).
+# A28 - bluetooth (Arch + Debian, systemd).
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

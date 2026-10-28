@@ -1,10 +1,10 @@
 # Kumi
 
-Kumi is the id-86 Wayland shell, built on `kumizo-kit`: bar, launcher,
+Kumi is the A28 Wayland shell, built on `kumizo-kit`: bar, launcher,
 clipboard manager, notifications, control center, tasks, pomodoro, OSD and
 lockscreen — one process, GPU-rendered.
 
-This directory is the shell source installed by id-86. Edit it freely; rebuild
+This directory is the shell source installed by A28. Edit it freely; rebuild
 with `~/.local/share/shell/build`.
 
 ## Build

@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# id-86 - dotfiles installation from the versioned files.
+# A28 - dotfiles installation from the versioned files.
 # Target: Arch Linux + systemd + sway (mocha by default).
 set -euo pipefail
 shopt -s nullglob
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DOTFILES_DIR="$(cd "$SCRIPT_DIR/../dotfiles" && pwd)"
-BACKUP_DIR="$HOME/.backup-id-86/$(date +%Y%m%d%H%M%S)"
+BACKUP_DIR="$HOME/.backup-A28/$(date +%Y%m%d%H%M%S)"
 
 echo "==> Backing up existing configs to $BACKUP_DIR..."
 mkdir -p "$BACKUP_DIR"

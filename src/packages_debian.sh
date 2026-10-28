@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# id-86 - rice packages (Debian trixie+).
+# A28 - rice packages (Debian trixie+).
 # Tolerant apt (see lib.sh): names vary across Debian versions.
 # Not ported: nwg-look (no package), awww (git build, see awww.sh).
 

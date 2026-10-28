@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# id-86 - sway compositor (swayfs fork, effects + extras).
+# A28 - sway compositor (swayfs fork, effects + extras).
 # Via the upstream installer (Arch: PKGBUILD + makepkg; Debian: meson
 # build + pinned wlroots/scenefx, long). Skip if swayfs is already in place.
 # Branch: SWAYFS_BRANCH (default stable, passed to the installer).

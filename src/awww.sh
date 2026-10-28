@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# id-86 - awww wallpaper: package on Arch, git build on Debian
+# A28 - awww wallpaper: package on Arch, git build on Debian
 # (not on crates.io, no upstream binary; https://codeberg.org/LGFae/awww).
 # We build the stable TAG, not main: main's lockfile drifted (rustix
 # unsafe) while the code did not follow -> main no longer compiles.

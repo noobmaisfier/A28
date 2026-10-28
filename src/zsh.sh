@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# id-86 - zsh shell: oh-my-zsh + external plugins (mirrors the current ~/.zshrc).
+# A28 - zsh shell: oh-my-zsh + external plugins (mirrors the current ~/.zshrc).
 set -euo pipefail
 
 echo "==> Installing oh-my-zsh..."

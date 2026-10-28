@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# id-86 - Kumi shell (part of the rice: sway binds, bar, lock, MPRIS media).
+# A28 - Kumi shell (part of the rice: sway binds, bar, lock, MPRIS media).
 # Compiled only: the Kumi source is vendored in dotfiles/share/shell/kumi,
 # installed in ~/.local/share/shell/kumi and built by ~/.local/share/shell/build.
 # The kumizo CLI and SDK come from crates.io. Binaries land in ~/.local/bin
@@ -16,7 +16,7 @@ SRC="${SHELL_SRC:-$HOME/.local/share/shell/kumi}"
 STAMP="$(dirname "$SRC")/.needs-build"
 BUILDER="$SCRIPT_DIR/../dotfiles/share/shell/build"
 
-echo "==> Installing id-86 shell from source..."
+echo "==> Installing A28 shell from source..."
 
 installed=1
 for b in "${BINS[@]}"; do

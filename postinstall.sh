@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# id-86 - post-installation: steps that need an active session
+# A28 - post-installation: steps that need an active session
 # (they cannot run in a pure headless setup).
 # Usage: ./postinstall.sh (preferably from a sway session)
 # Steps: [1/4] vim, [2/4] nvim/Mason, [3/4] sway, [4/4] XDG.

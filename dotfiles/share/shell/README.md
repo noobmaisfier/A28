@@ -1,6 +1,6 @@
 # Shell source
 
-`kumi/` is the id-86 shell source. It is installed to
+`kumi/` is the A28 shell source. It is installed to
 `~/.local/share/shell/kumi` and built by `build` into `~/.local/bin` as `kumi`
 and `kumi-lockscreen`.
 

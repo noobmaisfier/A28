@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# id-86 - docker (Arch + systemd).
+# A28 - docker (Arch + systemd).
 set -euo pipefail
 
 echo "==> Configuring Docker..."

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# id-86 - rice installation (Arch + Debian).
+# A28 - rice installation (Arch + Debian).
 # Pure, portable rice: ./setup.sh
 # Rice + personal apps: ./me.sh
 # Recommended prerequisite: FRESH install.
@@ -76,7 +76,7 @@ choose_swayfs() {
 choose_nvim
 choose_swayfs
 
-echo "==> id-86 rice (distro: $ID86_DISTRO)"
+echo "==> A28 rice (distro: $ID86_DISTRO)"
 
 run_module() {
     local module=$1

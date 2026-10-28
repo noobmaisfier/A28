@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# id-86 - Rust toolchain: Debian via rustup (apt is too old for
+# A28 - Rust toolchain: Debian via rustup (apt is too old for
 # gpui/kumi and awww); Arch: rust/cargo come from packages.sh.
 set -euo pipefail
 

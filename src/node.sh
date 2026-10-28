@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# id-86 - Node 24 via nvm + pnpm (official methods, user-local,
+# A28 - Node 24 via nvm + pnpm (official methods, user-local,
 # Arch + Debian, no sudo). Replaces the distro packages (nodejs/npm/pnpm).
 # nvm edits ~/.zshrc on install but dotfiles.sh overwrites it afterwards:
 # the durable block is versioned in dotfiles/.zshrc.

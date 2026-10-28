@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# id-86 - rice packages (Arch). The personal part (apps, dev toolchain) is in me.sh.
+# A28 - rice packages (Arch). The personal part (apps, dev toolchain) is in me.sh.
 
 echo "==> Installing rice packages (Arch)..."
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# id-86 - GTK themes for the 7 variants (default: mocha).
+# A28 - GTK themes for the 7 variants (default: mocha).
 # Luv icons + Bibata Modern cursors (Amber/Ice/Classic): installed manually
 # (~/.icons, ~/.themes), see README.
 # - light      -> flexoki (kepano/flexoki, gtk/, clone sparse)

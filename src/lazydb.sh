@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# id-86 - LazyDB (personal tool): installs the binary into ~/.local/bin.
+# A28 - LazyDB (personal tool): installs the binary into ~/.local/bin.
 # The installer manages its own PATH block in ~/.zshrc (idempotent).
 set -euo pipefail
 

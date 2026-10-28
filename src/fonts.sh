@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# id-86 - font improvement, system part (davgar99/arch-linux-font-improvement-guide).
+# A28 - font improvement, system part (davgar99/arch-linux-font-improvement-guide).
 # The user rendering (fonts.conf + conf.d) is versioned in dotfiles/fontconfig/
 # and copied by dotfiles.sh; the font packages are in packages(_debian).sh.
 # Here: presets, freetype, stem darkening, cache. Wayland: no X11 step.
