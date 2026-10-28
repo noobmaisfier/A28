@@ -79,8 +79,8 @@ Its source is vendored in `dotfiles/share/shell/kumi/` and installed to
 (backup in `~/.backup-id-86/<date>/share-shell`) and rebuilds it if needed.
 
 To modify or extend kumi, see the upstream docs:
-- [kumizo Guide](https://github.com/noobmaisfier/kumizo/blob/main/docs/guide.md)
-- [kumizo API](https://github.com/noobmaisfier/kumizo/blob/main/docs/api.md)
+- [kumizo Guide](https://github.com/noobmaisfier/kumizo/blob/main/docs/GUIDE.md)
+- [kumizo API](https://github.com/noobmaisfier/kumizo/blob/main/docs/API.md)
 
 After editing the source, rebuild and restart the shell:
 
