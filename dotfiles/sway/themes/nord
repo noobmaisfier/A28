@@ -1,0 +1,64 @@
+# Nord Theme for Sway - https://www.nordtheme.com/docs/colors-and-palettes
+
+set $cursor Bibata-Modern-Ice
+set $cursor_size 32
+seat * xcursor_theme $cursor $cursor_size
+
+# Official Nord: Polar Night (nord0-3), Snow Storm (nord4-6),
+# Frost (nord7-10), Aurora (nord11-15).
+set $nord0      #2E3440
+set $nord1      #3B4252
+set $nord2      #434C5E
+set $nord3      #4C566A
+set $nord4      #D8DEE9
+set $nord5      #E5E9F0
+set $nord6      #ECEFF4
+set $nord7      #8FBCBB
+set $nord8      #88C0D0
+set $nord9      #81A1C1
+set $nord10     #5E81AC
+set $nord11     #BF616A
+set $nord12     #D08770
+set $nord13     #EBCB8B
+set $nord14     #A3BE8C
+set $nord15     #B48EAD
+
+# Roles (tx_2 = nord-vim lightened comment #616E88 to stay readable)
+set $tx         $nord4
+set $tx_2       #616E88
+set $tx_3       $nord3
+set $bg         $nord0
+set $bg_2       $nord1
+set $ui         $nord2
+set $ui_2       $nord3
+set $ui_3       $nord3
+
+# Accents: nord8 = official primary accent; Nord has no pink,
+# magenta uses ice green nord7 (documented).
+set $red        $nord11
+set $orange     $nord12
+set $yellow     $nord13
+set $green      $nord14
+set $cyan       $nord8
+set $blue       $nord9
+set $purple     $nord15
+set $magenta    $nord7
+
+# Window colors for Sway
+#                       border    bg        text      indicator child_border
+client.focused          $blue     $bg       $tx       $blue     $blue
+client.focused_inactive $ui_2     $bg       $tx_2     $ui_2     $ui_2
+client.unfocused        $ui_2     $bg       $tx_2     $ui_2     $ui_2
+client.urgent           $red      $bg       $red      $orange   $red
+client.placeholder      $ui_2     $bg       $tx_3     $ui_2     $ui_2
+client.background       $bg
+
+# Semantic color aliases
+set $accent     $cyan
+set $warning    $yellow
+set $error      $red
+set $success    $green
+set $info       $blue
+
+# Wallpaper: managed by awww (change-theme/set-*.sh shows the theme's fixed
+# image, slideshow via the awww-cycle timer).

@@ -1,0 +1,172 @@
+# Aurora for yazi - aurora shell palette (theme.rs, GREEN accent #00E8C6).
+# Fixed on 2026-10-10 (the old version used the ray-x purple).
+# NO EXISTING PORT, built from the tokyonight_night.toml template.
+[mgr]
+# NOTE: can be combined with tmTheme (sublime colorshceme file) for preview code highlight
+# syntect_theme = "path/to/tmTheme"
+
+cwd = { fg = "#6b7794", italic = true }
+
+# Hovered
+hovered         = { bg = "#1c2333" }
+preview_hovered = { bg = "#1c2333" }
+
+# Find
+find_keyword  = { fg = "#131824", bg = "#fbbf24", bold = true }
+find_position = { fg = "#00e8c6", bg = "#131824", bold = true }
+
+# Marker
+marker_copied   = { fg = "#00e8c6", bg = "#00e8c6" }
+marker_cut      = { fg = "#ff5c7a", bg = "#ff5c7a" }
+marker_marked   = { fg = "#8b7cff", bg = "#8b7cff" }
+marker_selected = { fg = "#00e8c6", bg = "#00e8c6" }
+
+# Count
+count_copied   = { fg = "#131824", bg = "#00e8c6" }
+count_cut      = { fg = "#131824", bg = "#ff5c7a" }
+count_selected = { fg = "#131824", bg = "#00e8c6" }
+
+# Border
+border_symbol = "│"
+border_style  = { fg = "#00e8c6" }
+
+# Tab
+[tabs]
+active   = { fg = "#04120f", bg = "#00e8c6" }
+inactive = { fg = "#00e8c6", bg = "#232b40" }
+sep_inner = { open = "", close = "" }
+sep_outer = { open = "", close = "" }
+
+[mode]
+normal_main = { fg = "#04120f", bg = "#00e8c6", bold = true }
+normal_alt  = { fg = "#00e8c6", bg = "#232b40" }
+
+select_main = { fg = "#04120f", bg = "#8b7cff", bold = true }
+select_alt  = { fg = "#8b7cff", bg = "#232b40" }
+
+unset_main  = { fg = "#04120f", bg = "#8b7cff", bold = true }
+unset_alt   = { fg = "#8b7cff", bg = "#232b40" }
+
+[indicator]
+parent  = { fg = "#e6edf7", bg = "#232b40" }
+current = { fg = "#00e8c6", bg = "#232b40", bold = true }
+preview = { underline = true }
+padding = { open = "", close = "" }
+
+[status]
+sep_left  = { open = "", close = "" }
+sep_right = { open = "", close = "" }
+
+overall   = { fg = "#e6edf7", bg = "#131824" }
+
+# Progress
+progress_label  = { fg = "#e6edf7", bold = true }
+progress_normal = { fg = "#8b7cff", bg = "#1c2333" }
+progress_error  = { fg = "#ff5c7a", bg = "#1c2333" }
+
+# Permissions
+perm_type  = { fg = "#00e8c6" }
+perm_read  = { fg = "#fbbf24" }
+perm_write = { fg = "#ff5c7a" }
+perm_exec  = { fg = "#00e8c6" }
+perm_sep   = { fg = "#6b7794" }
+
+[pick]
+border   = { fg = "#00e8c6" }
+active   = { fg = "#e6edf7",  bg = "#1c2333" }
+inactive = { fg = "#e6edf7" }
+
+# Input
+[input]
+border   = { fg = "#00e8c6" }
+title    = { fg = "#00e8c6" }
+value    = { fg = "#8b7cff" }
+selected = { bg = "#1c2333" }
+
+# Completion
+[cmp]
+border   = { fg = "#00e8c6" }
+active   = { fg = "#e6edf7", bg = "#232b40" }
+inactive = { fg = "#e6edf7" }
+
+icon_file    = ""
+icon_folder  = ""
+icon_command = ""
+
+# Tasks
+[tasks]
+border  = { fg = "#00e8c6" }
+title   = { fg = "#00e8c6" }
+hovered = { fg = "#e6edf7", bg = "#1c2333" }
+
+# Which
+[which]
+cols            = 3
+mask            = { bg = "#131824" }
+cand            = { fg = "#00e8c6" }
+rest            = { fg = "#e6edf7" }
+desc            = { fg = "#8b7cff" }
+separator       = " ➜ "
+separator_style = { fg = "#6b7794" }
+
+# Confirm
+[confirm]
+border  = { fg = "#00e8c6" }
+title   = { fg = "#00e8c6" }
+body = {}
+list    = {}
+btn_yes = { bg = "#1c2333" }
+btn_no  = {}
+btn_labels = [ "  [Y]es  ", "  (N)o  " ]
+
+# Spot
+[spot]
+border  = { fg = "#00e8c6" }
+title   = { fg = "#00e8c6" }
+
+# Notify
+[notify]
+title_info  = { fg = "#00e8c6" }
+title_warn  = { fg = "#fbbf24" }
+title_error = { fg = "#ff5c7a" }
+
+icon_error = ""
+icon_warn = ""
+icon_info = ""
+
+# Help
+[help]
+on      = { fg = "#00e8c6" }
+run     = { fg = "#8b7cff" }
+desc    = { fg = "#00e8c6" }
+hovered = { bg = "#1c2333" }
+footer  = { fg = "#e6edf7", bg = "#0b0e14" }
+
+[filetype]
+
+rules = [
+	# Images
+	{ mime = "image/*", fg = "#fbbf24" },
+
+	# Media
+	{ mime = "{audio,video}/*", fg = "#8b7cff" },
+
+	# Archives
+	{ mime = "application/*zip", fg = "#ff5c7a" },
+	{ mime = "application/x-{tar,bzip*,7z-compressed,xz,rar}", fg = "#ff5c7a" },
+
+	# Documents
+	{ mime = "application/{pdf,doc,rtf,vnd.*}", fg = "#00e8c6" },
+
+	# Empty files
+	# { mime = "inode/x-empty", fg = "#ff5c7a" },
+
+	# Special files
+	{ url = "*", is = "orphan", bg = "#ff5c7a" },
+	{ url = "*", is = "exec"  , fg = "#00e8c6" },
+
+	# Fallback
+	{ url = "*/", fg = "#00e8c6" },
+	{ url = "*", fg = "#e6edf7" }
+]
+    

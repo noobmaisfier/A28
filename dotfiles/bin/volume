@@ -1,0 +1,53 @@
+#!/bin/bash
+# volume.sh - PipeWire/PulseAudio volume.
+# No notification here: kumizo already shows its OSD (audio service).
+
+# Get volume (0-100)
+get_volume() {
+    if command -v wpctl &> /dev/null; then
+        wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '{print int($2*100)}'
+    else
+        pactl get-sink-volume @DEFAULT_SINK@ | grep -o '[0-9]*%' | head -1 | tr -d %
+    fi
+}
+
+# Get mute status (rc=0 if muted)
+is_muted() {
+    if command -v wpctl &> /dev/null; then
+        wpctl get-volume @DEFAULT_AUDIO_SINK@ | grep -q "MUTED"
+    else
+        pactl get-sink-mute @DEFAULT_SINK@ | grep -q "yes"
+    fi
+}
+
+# Main logic
+case $1 in
+    up)
+        if command -v wpctl &> /dev/null; then
+            wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
+        else
+            pactl set-sink-volume @DEFAULT_SINK@ +5%
+        fi
+        ;;
+    down)
+        if command -v wpctl &> /dev/null; then
+            wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+        else
+            pactl set-sink-volume @DEFAULT_SINK@ -5%
+        fi
+        ;;
+    mute)
+        if command -v wpctl &> /dev/null; then
+            wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+        else
+            pactl set-sink-mute @DEFAULT_SINK@ toggle
+        fi
+        ;;
+    get)
+        get_volume
+        ;;
+    *)
+        echo "Usage: $0 {up|down|mute|get}"
+        exit 1
+        ;;
+esac

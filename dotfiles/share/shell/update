@@ -1,0 +1,98 @@
+#!/usr/bin/env bash
+# id-86 - update: rebuild the Kumi shell from the local source and
+# refresh ~/.local/bin.
+#
+# The source is the editable copy installed by setup.sh:
+#   ~/.local/share/shell/kumi        (override: SHELL_SRC=...)
+# The build helper (~/.local/share/shell/build) compiles it and installs
+# kumi, kumi-lockscreen and the pinned kumizo CLI into ~/.local/bin.
+#
+# Usage: update [--no-restart] [--help]
+#   The running shell is restarted by default so the new build is live.
+set -euo pipefail
+
+SRC="${SHELL_SRC:-$HOME/.local/share/shell/kumi}"
+ROOT="${ID86_PREFIX:-$HOME/.local}"
+DEST="$ROOT/bin"
+SHARE="$(dirname "$SRC")"
+BUILDER="$SHARE/build"
+
+usage() {
+    cat <<'EOF'
+Usage: update [--no-restart]
+
+Rebuild the Kumi shell from ~/.local/share/shell/kumi and install it into
+~/.local/bin, then restart the running shell so the new build is live.
+
+Options:
+  -n, --no-restart  build only, leave the running shell alone
+  -h, --help        show this help
+
+Environment:
+  SHELL_SRC      source directory (default: ~/.local/share/shell/kumi)
+  ID86_PREFIX    install prefix (default: ~/.local)
+EOF
+}
+
+restart=1
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -h|--help) usage; exit 0 ;;
+        -r|--restart) restart=1 ;;
+        -n|--no-restart) restart=0 ;;
+        *) echo "[!] unknown option: $1" >&2; usage >&2; exit 2 ;;
+    esac
+    shift
+done
+
+if [[ ! -f "$SRC/Cargo.toml" ]]; then
+    echo "[!] shell source missing: $SRC" >&2
+    echo "    run ./setup.sh first (src/dotfiles.sh installs the source)" >&2
+    exit 1
+fi
+if [[ ! -f "$BUILDER" ]]; then
+    echo "[!] build helper missing: $BUILDER" >&2
+    exit 1
+fi
+
+echo "==> Updating the Kumi shell from $SRC..."
+SHELL_SRC="$SRC" ID86_PREFIX="$ROOT" bash "$BUILDER"
+
+# The source is now built: refresh the hash and clear the rebuild stamp so a
+# later setup.sh does not rebuild again.
+shell_hash() {
+    (cd "$1" && find . -path ./target -prune -o -path ./.git -prune -o \
+        -type f ! -name .source-hash ! -name .needs-build -print0 \
+        | LC_ALL=C sort -z | xargs -0 sha256sum | sha256sum | cut -d' ' -f1)
+}
+if [[ "$SHARE" == "$HOME/.local/share/shell" ]]; then
+    shell_hash "$SRC" > "$SHARE/.source-hash"
+fi
+rm -f "$SHARE/.needs-build"
+
+echo "==> Shell updated: $DEST/kumi, $DEST/kumi-lockscreen, $DEST/kumizo"
+
+if [[ $restart == 1 ]]; then
+    if [[ ! -x "$DEST/kumi" ]]; then
+        echo "[!] $DEST/kumi missing, cannot restart the shell" >&2
+        exit 1
+    fi
+    # No live session (TTY, SSH, CI): nothing to restart.
+    if [[ -z "${WAYLAND_DISPLAY:-}" ]] && ! command -v swaymsg >/dev/null 2>&1; then
+        echo "==> No Wayland session detected, the shell will start at next login"
+        exit 0
+    fi
+    echo "==> Restarting the shell..."
+    pkill -x kumi 2>/dev/null || true
+    sleep 0.5
+    # `swaymsg reload` does not re-run the config `exec` lines, so the shell is
+    # started explicitly (detached from this terminal).
+    setsid "$DEST/kumi" >/dev/null 2>&1 &
+    sleep 0.5
+    if pgrep -x kumi >/dev/null 2>&1; then
+        echo "    shell restarted"
+    else
+        echo "[!] the shell did not start, check it manually: $DEST/kumi" >&2
+        exit 1
+    fi
+fi

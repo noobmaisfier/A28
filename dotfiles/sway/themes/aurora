@@ -1,0 +1,48 @@
+# Aurora Theme for Sway
+# Aurora shell palette: ~/.iCode/kumizo/examples/aurora/src/theme.rs
+# ("Aurora" entry, GREEN accent #00E8C6). Fixed 2026-10-10:
+# the old version wrongly used ray-x/aurora's purple.
+
+set $cursor Bibata-Modern-Ice
+set $cursor_size 32
+seat * xcursor_theme $cursor $cursor_size
+
+# Aurora (near-black night-blue background, light text, teal-green accent)
+set $bg         #0B0E14
+set $bg_2       #131824
+set $ui         #1C2333
+set $ui_2       #232B40
+set $ui_3       #334155
+set $tx         #E6EDF7
+set $tx_2       #6B7794
+set $tx_3       #334155
+
+# Accents (shell kumi ; brights = echelle Tailwind documentee)
+set $red        #FF5C7A
+set $orange     #FBBF24
+set $yellow     #FCD34D
+set $green      #4ADE80
+set $cyan       #00E8C6
+set $cyan_dark   #00806D
+set $blue       #8B7CFF
+set $purple     #C4B5FD
+set $magenta    #E879F9
+
+# Window colors for Sway
+#                       border    bg        text      indicator child_border
+client.focused          $cyan_dark $bg       $tx       $cyan_dark $cyan_dark
+client.focused_inactive $ui_2     $bg       $tx_2     $ui_2     $ui_2
+client.unfocused        $ui_2     $bg       $tx_2     $ui_2     $ui_2
+client.urgent           $red      $bg       $red      $orange   $red
+client.placeholder      $ui_2     $bg       $tx_3     $ui_2     $ui_2
+client.background       $bg
+
+# Semantic color aliases
+set $accent     $cyan
+set $warning    $orange
+set $error      $red
+set $success    $green
+set $info       $blue
+
+# Wallpaper: managed by awww (change-theme/set-*.sh shows the theme's fixed
+# image, slideshow via the awww-cycle timer).

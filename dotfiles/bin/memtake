@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+
+# memcheck.sh - All-in-one memory checker
+set -euo pipefail
+
+command -v fzf >/dev/null || { echo "Install fzf: sudo pacman -S fzf"; exit 1; }
+command -v bc >/dev/null || { echo "Install bc: sudo pacman -S bc"; exit 1; }
+
+# Get processes with memory info
+get_process_list() {
+    ps aux --no-headers | awk '{
+        cmd = $11
+        gsub(/.*\//, "", cmd)
+        gsub(/^-/, "", cmd)
+        
+        if (cmd != "" && !seen[cmd]++) {
+            # Calculate memory in MB
+            mem_mb = $6 / 1024
+            printf "%-20s %6.1f MB  %5.1f%%  %s\n", cmd, mem_mb, $4, $11
+        }
+    }' | sort -k2 -nr
+}
+
+# Select and show detailed memory
+selected=$(get_process_list | \
+    fzf --prompt="Memory Check ▶ " \
+        --height=70% \
+        --layout=reverse \
+        --border=rounded \
+        --header="ENTER: detailed memory info | ESC: quit" \
+        --preview='
+            app=$(echo {} | awk "{print \$1}")
+            
+            echo -e "\033[1;36m=== $app ===\033[0m"
+            echo
+            
+            # Count processes
+            count=$(pgrep -cx "$app")
+            echo -e "\033[1;33mProcess count:\033[0m $count"
+            echo
+            
+            # Calculate total memory
+            total_kb=0
+            for pid in $(pgrep -x "$app"); do
+                rss=$(ps -p "$pid" -o rss= 2>/dev/null || echo "0")
+                total_kb=$((total_kb + rss))
+            done
+            
+            if [ "$total_kb" -gt 0 ]; then
+                total_mb=$(echo "scale=2; $total_kb / 1024" | bc)
+                echo -e "\033[1;33mTotal memory:\033[0m ${total_mb} MB"
+            fi
+            echo
+            
+            # Show individual processes
+            echo -e "\033[1;33mProcesses:\033[0m"
+            pgrep -x "$app" | head -5 | while read pid; do
+                ps -p "$pid" -o pid,rss,comm= 2>/dev/null | \
+                awk "{printf \"  PID %-8s %6s KB  %s\n\", \$1, \$2, \$3}"
+            done
+        ' \
+        --preview-window=right:50%:wrap
+) || exit 0
+
+# Extract app name and show detailed info
+app_name=$(echo "$selected" | awk '{print $1}')
+
+echo
+echo "═══════════════════════════════════════"
+echo "  Memory Analysis: $app_name"
+echo "═══════════════════════════════════════"
+echo
+
+# Detailed memory calculation
+total_ram=0
+process_count=0
+
+echo "Individual processes:"
+for pid in $(pgrep -x "$app_name"); do
+    rss=$(ps -p "$pid" -o rss= 2>/dev/null)
+    if [ -n "$rss" ]; then
+        total_ram=$((total_ram + rss))
+        process_count=$((process_count + 1))
+        
+        # Get command info
+        cmd_info=$(ps -p "$pid" -o comm= 2>/dev/null)
+        mem_mb=$(echo "scale=1; $rss / 1024" | bc)
+        
+        printf "  PID %-8s %8.1f MB  %s\n" "$pid" "$mem_mb" "$cmd_info"
+    fi
+done
+
+echo
+echo "─────────────────────────────────────"
+if [ "$total_ram" -eq 0 ]; then
+    echo "No processes found or unable to get memory info"
+else
+    total_ram_mb=$(echo "scale=2; $total_ram / 1024" | bc)
+    echo "Total processes: $process_count"
+    echo "Total memory: $total_ram_mb MB"
+fi
+echo

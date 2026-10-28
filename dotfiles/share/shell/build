@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+# id-86 - build the shell from the vendored source.
+#
+# The source lives in ~/.local/share/shell/kumi (installed by dotfiles.sh).
+# This helper compiles it together with the kumizo CLI from crates.io and
+# installs everything into ~/.local/bin.
+set -euo pipefail
+
+SRC="${SHELL_SRC:-$HOME/.local/share/shell/kumi}"
+ROOT="${ID86_PREFIX:-$HOME/.local}"
+
+usage() {
+    cat <<'EOF'
+Usage: build [--help]
+
+Build and install kumi and kumi-lockscreen from the vendored source in
+~/.local/share/shell/kumi, plus the kumizo CLI from crates.io, into ~/.local/bin.
+
+Environment:
+  SHELL_SRC           source directory (default: ~/.local/share/shell/kumi)
+  ID86_PREFIX         install prefix (default: ~/.local)
+  ID86_SHELL_VERSION  kumizo CLI version (default: source Cargo.toml version)
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        -h|--help) usage; exit 0 ;;
+        *) echo "[!] unknown option: $1" >&2; usage >&2; exit 2 ;;
+    esac
+done
+
+export PATH="$HOME/.cargo/bin:$PATH"
+if ! command -v cargo >/dev/null 2>&1; then
+    echo "[!] cargo missing, run ./setup.sh first" >&2
+    exit 1
+fi
+
+if [[ ! -f "$SRC/Cargo.toml" ]]; then
+    echo "[!] shell source missing: $SRC" >&2
+    echo "    run ./setup.sh first (or src/dotfiles.sh)" >&2
+    exit 1
+fi
+
+VERSION="${ID86_SHELL_VERSION:-$(sed -n 's/^version = "\(.*\)"/\1/p' "$SRC/Cargo.toml" | head -n 1)}"
+if [[ -z "$VERSION" ]]; then
+    echo "[!] cannot read the version from $SRC/Cargo.toml" >&2
+    exit 1
+fi
+
+mkdir -p "$ROOT/bin"
+echo "==> Building kumi into $ROOT/bin..."
+cargo install --locked --path "$SRC" --root "$ROOT" --force
+
+echo "==> Installing kumizo ${VERSION} from crates.io..."
+cargo install --locked --root "$ROOT" --force "kumizo@${VERSION}"
+
+echo "==> Shell built (kumi, kumi-lockscreen, kumizo)"
+echo "    Restart the session (or kumi) to use the new binaries."

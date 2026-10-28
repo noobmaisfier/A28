@@ -1,0 +1,77 @@
+###############################################################################
+# MAIN SWAY CONFIGURATION
+###############################################################################
+
+set $env.XDG_CURRENT_DESKTOP sway
+
+# --- Cursor ---
+# The cursor (Bibata Modern) is chosen per theme in ~/.config/sway/themes/*
+# (Amber for warm themes, Ice for cold dark ones, Classic for GitHub Light).
+
+# --- Autostart ---
+exec dbus-update-activation-environment --all
+exec --no-startup-id wlsunset -t 3200 -T 3300
+# Replaced by the unified Kumi shell (in-process topbar, dock, osd, notifications):
+# exec mako
+# exec waybar -c ~/.config/waybar/config.json.sway
+# --- Shell: Kumi (bar, launcher, control center, notifications, OSD) ---
+exec ~/.local/bin/kumi
+
+# --- Wallpaper: awww (daemon + initial image via awww-cycle;
+# fixed image written by change-theme/set-*.sh, slideshow by timer) ---
+exec awww-daemon
+exec $HOME/.local/bin/awww-cycle
+
+# --- Global variables ---
+set $mod Mod4
+set $left h
+set $down j
+set $up k
+set $right l
+set $term foot
+
+# --- Window appearance ---
+gaps inner 8
+gaps outer 4
+smart_borders off
+default_border pixel 2
+default_floating_border pixel 2
+hide_edge_borders none
+
+for_window [app_id=".*"] focus
+
+
+# --- Include theme ---
+include ~/.config/sway/themes/mocha
+
+# --- Effects (swayfs fork: animations, rounded corners) ---
+include ~/.config/sway/effects.conf
+
+# --- Include window rules ---
+include ~/.config/sway/window-rules.conf
+
+# --- Include key bindings ---
+include ~/.config/sway/bindings.conf
+
+# --- Output configuration ---
+# output * bg $HOME/.wallpaper/spark.jpg fill
+
+# --- Idle configuration ---
+exec swayidle -w \
+    timeout 300 '~/.local/bin/kumi-lockscreen' \
+    timeout 600 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
+    before-sleep '~/.local/bin/kumi-lockscreen'
+
+# --- Input configuration ---
+input "type:touchpad" {
+    # xkb_layout "fr"
+    tap enabled
+    natural_scroll disabled
+}
+
+input type:keyboard {
+    xkb_options "compose:ralt,terminate:ctrl_alt_bksp,accessx"
+}
+
+bindsym $mod+u exec pkill -x kumi-lockscreen
+

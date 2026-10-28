@@ -1,0 +1,6 @@
+#!/bin/sh
+# Launch Sway in a clean D-Bus session.
+# Clear stale/corrupted D-Bus variables
+unset DBUS_SESSION_BUS_ADDRESS
+command -v dbus-run-session >/dev/null || { echo "sway-run: dbus-run-session not found" >&2; exit 127; }
+exec dbus-run-session sway "$@"

@@ -1,0 +1,23 @@
+[Default Applications]
+text/html=helium.desktop
+x-scheme-handler/http=helium.desktop
+x-scheme-handler/https=helium.desktop
+x-scheme-handler/about=helium.desktop
+x-scheme-handler/unknown=helium.desktop
+x-scheme-handler/fdm=freedownloadmanager_fdm_up.desktop
+x-scheme-handler/magnet=freedownloadmanager_magnet_up.desktop
+application/x-bittorrent=freedownloadmanager_torrent.desktop
+x-scheme-handler/mailto=helium.desktop
+video/webm=mpv.desktop
+x-scheme-handler/antigravity=antigravity.desktop
+image/png=org.gnome.gThumb.desktop
+text/markdown=userapp- foot -e vim %f-JLONX3.desktop
+
+[Added Associations]
+video/x-matroska=mpv.desktop;com.github.rafostar.Clapper.desktop;
+video/mp4=mpv.desktop;
+video/webm=mpv.desktop;
+image/png=helium.desktop;org.gnome.gThumb.desktop;
+application/pdf=ai.storyteller.pdfcraft.desktop;atril.desktop;helium.desktop;
+image/jpeg=org.gnome.gThumb.desktop;
+text/markdown=userapp- foot -e vim %f-JLONX3.desktop;vim.desktop;

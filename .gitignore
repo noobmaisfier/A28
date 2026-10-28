@@ -1,0 +1,5 @@
+# Local secrets: never versioned.
+# API keys live in ~/.config/id-86/secrets.sh (outside the repo).
+secrets.sh
+*.env
+.env

@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+
+# install - Simple package installer with fzf (multi-select)
+set -euo pipefail
+
+command -v fzf >/dev/null || { echo "Error: fzf not installed"; exit 1; }
+
+echo "Loading packages..." >&2
+
+SEPARATOR=$'\x1E'
+TMPFILE=$(mktemp)
+trap 'rm -f "$TMPFILE"' EXIT
+
+# Build list: name⟫description
+pacman -Ss | awk -v sep="$SEPARATOR" '
+    /^[^ ]/ {
+        if (name) print name sep desc
+        split($1, a, "/")
+        name = a[2]
+        gsub(/^[^ ]+ /, "", $0)
+        desc = $0
+    }
+    /^    / {
+        gsub(/^    /, "")
+        desc = desc " " $0
+    }
+    END {
+        if (name) print name sep desc
+    }
+' | \
+fzf --multi \
+    --delimiter="$SEPARATOR" \
+    --with-nth=1 \
+    --prompt="Install ▶ " \
+    --height=65% \
+    --layout=reverse \
+    --border=rounded \
+    --pointer="▶" \
+    --marker="✓" \
+    --color="pointer:cyan,marker:green,prompt:blue" \
+    --header="TAB = select/deselect | ENTER = install selected | ESC = quit" \
+    --preview='
+        echo -e "\033[1;36m{1}\033[0m\n"
+        echo -e "\033[2m{2}\033[0m\n"
+        echo -e "\033[1;33mPackage Information:\033[0m"
+        pacman -Si {1} 2>/dev/null | grep -E "^(Repository|Version|Download Size|Installed Size|Depends On|Conflicts With)" || echo "No additional info"
+    ' \
+    --preview-window=right:55%:wrap > "$TMPFILE" || exit 0
+
+# Read selected packages into array
+mapfile -t selected < "$TMPFILE"
+
+# Exit if nothing was selected
+if [[ ${#selected[@]} -eq 0 ]]; then
+    echo "No package selected."
+    exit 0
+fi
+
+# Extract only package names
+packages=()
+for line in "${selected[@]}"; do
+    pkg=$(echo "$line" | cut -d"$SEPARATOR" -f1)
+    packages+=("$pkg")
+done
+
+echo
+echo "Selected packages to install:"
+printf "   %s\n" "${packages[@]}"
+echo
+
+read -r -p "Proceed with installation? [y/N] " response || exit 1
+if [[ ! "$response" =~ ^[Yy]([Ee][Ss])?$ ]]; then
+    echo "Installation cancelled."
+    exit 0
+fi
+
+echo
+echo "Installing packages..."
+sudo pacman -S "${packages[@]}"

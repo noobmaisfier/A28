@@ -1,0 +1,6 @@
+[X-GNOME-Metatheme]
+Name=ID86-Github
+Type=X-GNOME-Metatheme
+Comment=GitHub Light (Primer) pour le rice hotix - derive de flexoki/gtk
+Encoding=UTF-8
+GtkTheme=ID86-Github

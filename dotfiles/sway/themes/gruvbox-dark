@@ -1,0 +1,55 @@
+# Gruvbox Dark Theme for Sway
+# Palette: https://github.com/morhetz/gruvbox (dark variant, medium)
+
+set $cursor Bibata-Modern-Amber
+set $cursor_size 32
+seat * xcursor_theme $cursor $cursor_size
+
+# Gruvbox dark (bg0-4, fg0-4, accents)
+set $bg0      #282828
+set $bg1      #3C3836
+set $bg2      #504945
+set $bg3      #665C54
+set $bg4      #7C6F64
+set $fg0      #FBF1C7
+set $fg1      #EBDBB2
+set $fg2      #D5C4A1
+set $fg3      #BDAE93
+set $fg4      #A89984
+set $gray     #928374
+set $red      #FB4934
+set $orange   #FE8019
+set $yellow   #FABD2F
+set $green    #B8BB26
+set $aqua     #8EC07C
+set $blue     #83A598
+set $purple   #D3869B
+
+# Roles
+set $bg         $bg0
+set $bg_2       #32302F
+set $ui         $bg1
+set $ui_2       $bg2
+set $ui_3       $bg2
+set $tx         $fg1
+set $tx_2       $fg4
+set $tx_3       $bg4
+
+# Window colors for Sway
+#                       border    bg        text      indicator child_border
+client.focused          $yellow   $bg       $tx       $yellow   $yellow
+client.focused_inactive $ui_2     $bg       $tx_2     $ui_2     $ui_2
+client.unfocused        $ui_2     $bg       $tx_2     $ui_2     $ui_2
+client.urgent           $red      $bg       $red      $orange   $red
+client.placeholder      $ui_2     $bg       $tx_3     $ui_2     $ui_2
+client.background       $bg
+
+# Semantic color aliases
+set $accent     $yellow
+set $warning    $orange
+set $error      $red
+set $success    $green
+set $info       $blue
+
+# Wallpaper: managed by awww (change-theme shows the theme's fixed image,
+# slideshow via the awww-cycle timer).

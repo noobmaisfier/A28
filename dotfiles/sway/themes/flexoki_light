@@ -1,0 +1,66 @@
+# Flexoki Light Theme for Sway - https://stephango.com/flexoki
+
+set $cursor Bibata-Modern-Amber
+set $cursor_size 28
+seat * xcursor_theme $cursor $cursor_size
+
+# Base Flexoki (light)
+set $black     #100F0F
+set $paper     #FFFCF0
+set $base_50   #F2F0E5
+set $base_100  #E6E4D9
+set $base_150  #DAD8CE
+set $base_200  #CECDC3
+set $base_300  #B7B5AC
+set $base_600  #6F6E69
+
+# Text / background / UI (mappings site flexoki, light)
+set $tx        $black
+set $tx_2      $base_600
+set $tx_3      $base_300
+set $bg        $paper
+set $bg_2      $base_50
+set $ui        $base_100
+set $ui_2      $base_150
+set $ui_3      $base_200
+
+# Accents 600 (text/borders on a light background) + 400 (vivid backgrounds)
+set $red       #AF3029
+set $red_2     #D14D41
+set $orange    #BC5215
+set $orange_2  #DA702C
+set $yellow    #AD8301
+set $yellow_2  #D0A215
+set $green     #66800B
+set $green_2   #879A39
+set $cyan      #24837B
+set $cyan_2    #3AA99F
+set $blue      #205EA6
+set $blue_dark   #12345B
+set $blue_2    #4385BE
+set $purple    #5E409D
+set $purple_2  #8B7EC8
+set $magenta   #A02F6F
+set $magenta_2 #CE5D97
+
+# Window colors for Sway
+#                       border    bg        text      indicator child_border
+client.focused          $blue_dark $bg       $tx       $blue_dark $blue_dark
+client.focused_inactive $ui_3     $bg       $tx_2     $ui_3     $ui_3
+client.unfocused        $ui_2     $bg       $tx_2     $ui_2     $ui_2
+client.urgent           $red      $bg       $red      $orange   $red
+client.placeholder      $ui_3     $bg       $tx_3     $ui_3     $ui_3
+client.background       $bg
+
+# Semantic color aliases
+set $accent     $blue
+set $warning    $orange
+set $error      $red
+set $success    $green
+set $info       $cyan
+
+# output * bg $HOME/.wallpaper/wall-01_1.webp fill
+# output * bg $HOME/.wallpaper/spark.jpg fill
+# exec  wbg $HOME/.wallpaper/wall-01_1.webp
+# Wallpaper: managed by awww (change-theme/set-*.sh shows the theme's fixed
+# image, slideshow via the awww-cycle timer).

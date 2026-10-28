@@ -1,0 +1,66 @@
+# GitHub Light Theme for Sway
+# Palette: Primer light scale via projekt0n/github-nvim-theme (github_light).
+# Mirrors the flexoki_light structure (client.*, alias, wbg).
+
+set $cursor Bibata-Modern-Classic
+set $cursor_size 28
+seat * xcursor_theme $cursor $cursor_size
+
+# Base Primer light (canvas/scale)
+set $black      #1F2328
+set $paper      #FFFFFF
+set $base_50    #F6F8FA
+set $base_100   #EAEFF2
+set $base_150   #D0D7DE
+set $base_200   #AFB8C1
+set $base_300   #8C959F
+set $base_600   #57606A
+
+# Text / background / UI
+set $tx         $black
+set $tx_2       $base_600
+set $tx_3       $base_300
+set $bg         $paper
+set $bg_2       $base_50
+set $ui         $base_100
+set $ui_2       $base_150
+set $ui_3       $base_200
+
+# Accents ANSI github_light (ansi + bright). Primer light n'a pas de rose :
+# magenta reuses purple (documented). Orange = accent #953800.
+set $red        #CF222E
+set $red_2      #A40E26
+set $orange     #953800
+set $orange_2   #953800
+set $yellow     #4D2D00
+set $yellow_2   #633C01
+set $green      #116329
+set $green_2    #1A7F37
+set $cyan       #1B7C83
+set $cyan_2     #3192AA
+set $blue       #0969DA
+set $blue_dark   #053A78
+set $blue_2     #218BFF
+set $purple     #8250DF
+set $purple_2   #A475F9
+set $magenta    #8250DF
+set $magenta_2  #A475F9
+
+# Window colors for Sway
+#                       border    bg        text      indicator child_border
+client.focused          $blue_dark $bg       $tx       $blue_dark $blue_dark
+client.focused_inactive $ui_3     $bg       $tx_2     $ui_3     $ui_3
+client.unfocused        $ui_2     $bg       $tx_2     $ui_2     $ui_2
+client.urgent           $red      $bg       $red      $orange   $red
+client.placeholder      $ui_3     $bg       $tx_3     $ui_3     $ui_3
+client.background       $bg
+
+# Semantic color aliases
+set $accent     $blue
+set $warning    $orange
+set $error      $red
+set $success    $green_2
+set $info       $cyan
+
+# Wallpaper: managed by awww (change-theme/set-*.sh shows the theme's fixed
+# image, slideshow via the awww-cycle timer).

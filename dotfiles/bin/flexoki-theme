@@ -1,0 +1,16 @@
+#!/bin/bash
+# id-86 - flexoki-theme: compatibility shim, delegates to change-theme.
+# Usage: flexoki-theme [flexoki-light|mocha|aurora|github-light|nord|tokyo-night|gruvbox-dark|toggle|status]
+# Kept for existing callers (external scripts); the logic lives
+# in change-theme (a single script for all 7 themes).
+
+set -u
+
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+if [[ -x "$HERE/change-theme" ]]; then
+    exec "$HERE/change-theme" "$@"
+fi
+
+echo "change-theme not found in $HERE" >&2
+exit 1

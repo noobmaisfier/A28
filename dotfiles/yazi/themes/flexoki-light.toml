@@ -1,0 +1,129 @@
+# Flexoki Light for yazi - https://stephango.com/flexoki
+# Docs: https://yazi-rs.github.io/docs/configuration/theme (v26.9.1)
+# Choice: series 600 for text on a light background (contrast),
+# series 400 for vivid accents (markers, errors).
+
+[app]
+overall = { bg = "#FFFCF0" }
+
+[mgr]
+cwd               = { fg = "#100F0F", bold = true }
+find_keyword      = { fg = "#100F0F", bg = "#FCEEB8" }
+find_position     = { fg = "#6F6E69" }
+symlink_target    = { fg = "#24837B" }
+marker_copied     = { fg = "#66800B", bg = "#66800B" }
+marker_cut        = { fg = "#AF3029", bg = "#AF3029" }
+marker_marked     = { fg = "#5E409D", bg = "#5E409D" }
+marker_selected   = { fg = "#AD8301", bg = "#AD8301" }
+count_copied      = { fg = "#FFFCF0", bg = "#66800B" }
+count_cut         = { fg = "#FFFCF0", bg = "#AF3029" }
+count_selected    = { fg = "#100F0F", bg = "#AD8301" }
+border_symbol     = "│"
+border_style      = { fg = "#CECDC3" }
+
+[indicator]
+parent  = { fg = "#100F0F", bg = "#E6E4D9" }
+current = { fg = "#205EA6", bg = "#E6E4D9", bold = true }
+preview = { underline = true }
+padding = { open = "", close = "" }
+
+[tabs]
+active   = { fg = "#FFFCF0", bg = "#205EA6", bold = true }
+inactive = { fg = "#6F6E69", bg = "#E6E4D9" }
+sep_inner = { open = "", close = "" }
+sep_outer = { open = "", close = "" }
+
+[mode]
+normal_main = { fg = "#FFFCF0", bg = "#66800B", bold = true }
+normal_alt  = { fg = "#66800B" }
+select_main = { fg = "#100F0F", bg = "#D0A215", bold = true }
+select_alt  = { fg = "#AD8301" }
+unset_main  = { fg = "#FFFCF0", bg = "#B7B5AC", bold = true }
+unset_alt   = { fg = "#B7B5AC" }
+
+[status]
+sep_left  = { open = "", close = "" }
+sep_right = { open = "", close = "" }
+
+overall         = { fg = "#100F0F", bg = "#F2F0E5" }
+perm_type       = { fg = "#6F6E69" }
+perm_read       = { fg = "#66800B" }
+perm_write      = { fg = "#AD8301" }
+perm_exec       = { fg = "#AF3029" }
+perm_sep        = { fg = "#B7B5AC" }
+progress_label  = { fg = "#100F0F", bold = true }
+progress_normal = { fg = "#66800B", bg = "#E6E4D9" }
+progress_error  = { fg = "#AF3029", bg = "#E6E4D9" }
+
+[which]
+cols            = 3
+mask            = { bg = "#E6E4D9" }
+cand            = { fg = "#66800B" }
+rest            = { fg = "#100F0F" }
+desc            = { fg = "#24837B" }
+separator       = " ➜ "
+separator_style = { fg = "#6F6E69" }
+
+[confirm]
+border = { fg = "#CECDC3" }
+title  = { fg = "#205EA6", bold = true }
+body   = { fg = "#100F0F" }
+list   = { fg = "#6F6E69" }
+btn_yes = { fg = "#FFFCF0", bg = "#66800B" }
+btn_no  = { fg = "#100F0F", bg = "#E6E4D9" }
+
+[spot]
+border   = { fg = "#CECDC3" }
+title    = { fg = "#205EA6", bold = true }
+tbl_col  = { fg = "#100F0F", bg = "#E6E4D9", bold = true }
+tbl_cell = { fg = "#100F0F", bg = "#DAD8CE" }
+
+[notify]
+title_info  = { fg = "#24837B", bold = true }
+title_warn  = { fg = "#AD8301", bold = true }
+title_error = { fg = "#AF3029", bold = true }
+
+[pick]
+border   = { fg = "#CECDC3" }
+active   = { fg = "#100F0F", bg = "#E6E4D9", bold = true }
+inactive = { fg = "#6F6E69" }
+
+[input]
+border   = { fg = "#205EA6" }
+title    = { fg = "#205EA6", bold = true }
+value    = { fg = "#100F0F" }
+selected = { bg = "#E6E4D9" }
+
+[cmp]
+border       = { fg = "#CECDC3" }
+active       = { fg = "#FFFCF0", bg = "#205EA6" }
+inactive     = { fg = "#100F0F" }
+icon_file    = ""
+icon_folder  = ""
+icon_command = ""
+
+[tasks]
+border  = { fg = "#CECDC3" }
+title   = { fg = "#205EA6", bold = true }
+hovered = { fg = "#100F0F", bg = "#E6E4D9" }
+
+[help]
+border  = { fg = "#CECDC3" }
+chord   = { fg = "#66800B", bold = true }
+action  = { fg = "#6F6E69" }
+hovered = { fg = "#100F0F", bg = "#E6E4D9" }
+
+[filetype]
+rules = [
+	# Images / audio / video
+	{ mime = "image/*", fg = "#A02F6F" },
+	{ mime = "{audio,video}/*", fg = "#5E409D" },
+	# Empty files
+	{ mime = "inode/empty", fg = "#B7B5AC" },
+	# Broken links
+	{ url = "*", is = "orphan", fg = "#AF3029", bold = true },
+	# Executables
+	{ url = "*", is = "exec", fg = "#66800B", bold = true },
+	# Folders
+	{ url = "*/", fg = "#205EA6", bold = true },
+]

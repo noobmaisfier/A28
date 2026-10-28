@@ -1,0 +1,40 @@
+#!/bin/bash
+# brightness.sh - backlight adjustment.
+# No notification here: kumizo already shows its OSD (brightness service).
+
+# First backlight device (multi-GPU safe)
+DEV=$(brightnessctl -m 2>/dev/null | head -n 1 | cut -d, -f1)
+if [[ -z "$DEV" ]]; then
+    echo "brightness: no backlight device" >&2
+    exit 1
+fi
+
+# Current brightness in percent
+get_brightness() {
+    brightnessctl -m -d "$DEV" | awk -F, '{print substr($4, 1, length($4)-1)}'
+}
+
+# Main logic
+case $1 in
+    up)
+        brightnessctl -d "$DEV" set 5%+
+        ;;
+    down)
+        brightnessctl -d "$DEV" set 5%-
+        ;;
+    set)
+        if [[ -n "${2:-}" ]]; then
+            brightnessctl -d "$DEV" set "${2%%%}"
+        else
+            echo "Usage: $0 set <value>"
+            exit 1
+        fi
+        ;;
+    get)
+        get_brightness
+        ;;
+    *)
+        echo "Usage: $0 {up|down|set <value>|get}"
+        exit 1
+        ;;
+esac

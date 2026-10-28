@@ -1,0 +1,75 @@
+#!/bin/bash
+# awww-cycle - slideshow through the rice's wallpaper pools via awww.
+# Usage: awww-cycle [next|prev]  (no arg: show the current index again or the first image)
+# Pool inferred from ~/.cache/flexoki-theme; index in ~/.cache/awww-index.
+# Starts awww-daemon if missing (sway autostart: plain `exec awww-cycle`).
+
+set -e
+
+# awww binaries: /usr/bin on Arch (package), ~/.local/bin or ~/.cargo/bin
+# on Debian (source build). Required under systemd/sway with a reduced PATH.
+for d in "$HOME/.local/bin" "$HOME/.cargo/bin"; do
+    case ":$PATH:" in *":$d:"*) ;; *) PATH="$d:$PATH" ;; esac
+done
+
+POOL_BASE="$HOME/.wallpaper/pools"
+STATE_THEME="$HOME/.cache/flexoki-theme"
+STATE_INDEX="$HOME/.cache/awww-index"
+export WAYLAND_DISPLAY="${WAYLAND_DISPLAY:-wayland-1}"
+
+pool_for() {
+    case "$1" in
+        flexoki-light|light) echo "light" ;;
+        mocha) echo "mocha" ;;
+        aurora) echo "aurora" ;;
+        github-light) echo "github" ;;
+        nord) echo "nord" ;;
+        tokyo-night) echo "tokyo" ;;
+        *) echo "mocha" ;;
+    esac
+}
+
+trans_for() {
+    case "$1" in
+        aurora) echo "wave" ;;       # wavy sweep, hacker-ish
+        tokyo-night) echo "center" ;; # circle from the center, neon
+        *) echo "simple" ;;           # sober fade
+    esac
+}
+
+# daemon: start it if missing, wait for the socket (max ~5 s)
+if ! pgrep -x awww-daemon >/dev/null 2>&1; then
+    setsid -f awww-daemon </dev/null >/dev/null 2>&1
+    for _ in $(seq 1 25); do
+        awww query >/dev/null 2>&1 && break
+        sleep 0.2
+    done
+fi
+
+theme="mocha"
+[[ -f "$STATE_THEME" ]] && theme="$(cat "$STATE_THEME")"
+pool="$(pool_for "$theme")"
+trans="$(trans_for "$theme")"
+dir="$POOL_BASE/$pool"
+
+mapfile -t imgs < <(find "$dir" -maxdepth 1 -type f -o -type l | sort)
+[[ ${#imgs[@]} -eq 0 ]] && { echo "awww-cycle: empty pool ($dir)" >&2; exit 1; }
+
+cmd="${1:-current}"
+current=""
+[[ -f "$STATE_INDEX" ]] && current="$(cat "$STATE_INDEX")"
+idx=-1
+for i in "${!imgs[@]}"; do
+    [[ "$(basename "${imgs[$i]}")" == "$current" ]] && { idx=$i; break; }
+done
+
+case "$cmd" in
+    next) idx=$(( (idx + 1) % ${#imgs[@]} )) ;;
+    prev) idx=$(( (idx - 1 + ${#imgs[@]}) % ${#imgs[@]} )) ;;
+    current) [[ $idx -lt 0 ]] && idx=0 ;;
+    *) echo "Usage: awww-cycle [next|prev]" >&2; exit 1 ;;
+esac
+
+img="${imgs[$idx]}"
+awww img "$img" --transition-type "$trans"
+basename "$img" > "$STATE_INDEX"

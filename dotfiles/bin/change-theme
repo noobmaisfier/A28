@@ -1,0 +1,662 @@
+#!/bin/bash
+# id-86 - change-theme: apply a theme to the whole system.
+# Targets: sway, foot, yazi, vim, nvim, GTK3/4, gsettings, kumizo, awww, fzf.
+#
+# Usage: change-theme <theme> | list | status | toggle
+#   <theme>  apply the theme (see "list")
+#   list     list available themes
+#   status   show the current theme
+#   toggle   switch to the next theme (THEMES order, wraps around)
+#
+# Current state: ~/.cache/flexoki-theme (read by awww-cycle for the image pool).
+# fzf colors: ~/.cache/fzf-theme (sourced by ~/.zshrc).
+#
+# Replaces the old bin/change-theme/set-*.sh scripts (6 near-identical files).
+# herdr is not handled here: its theme is set in ~/.config/herdr/config.toml.
+
+set -u
+
+THEMES="mocha flexoki-light aurora github-light nord tokyo-night gruvbox-dark"
+STATE_FILE="$HOME/.cache/flexoki-theme"
+FZF_FILE="$HOME/.cache/fzf-theme"
+
+# Stale SWAYSOCK (old terminal under a restarted sway): use the newest socket.
+if ! swaymsg -t get_version >/dev/null 2>&1; then
+    fresh=$(ls -t /run/user/$UID/sway-ipc.*.sock 2>/dev/null | head -1)
+    [[ -n "${fresh:-}" ]] && export SWAYSOCK="$fresh"
+fi
+
+# --- Theme table -------------------------------------------------------
+# SWAY_THEME  directory name in ~/.config/sway/themes/
+# FOOT_THEME  .ini file in ~/.config/foot/themes/
+# YAZI_THEME  .toml file in ~/.config/yazi/themes/
+# VIM_SCHEME  vim colorscheme; NVIM_THEME nvim base46 theme
+# GTK_THEME   GTK theme name; GTK_DARK 0=light 1=dark
+# GTK_CURSOR  theme Bibata cursor; GTK_CURSOR_SIZE size in px
+# KUMIZO_THEME shell theme name (kumizo)
+# WALLPAPER   still image in ~/.wallpaper/; TRANSITION awww transition
+
+# Legacy alias: "light" was the old name of "flexoki-light".
+normalize_theme() {
+    case "$1" in
+        light) echo "flexoki-light" ;;
+        *) echo "$1" ;;
+    esac
+}
+
+load_theme() {
+    case "$1" in
+        flexoki-light|light)
+            # official flexoki light.
+            SWAY_THEME=flexoki_light
+            FOOT_THEME=flexoki-light.ini
+            FOOT_COLOR=light
+            YAZI_THEME=flexoki-light.toml
+            VIM_SCHEME=flexoki_light
+            VIM_BG=light
+            NVIM_THEME=flexoki-light
+            GTK_THEME=flexoki
+            GTK_DARK=0
+            GNOME_SCHEME=prefer-light
+            GTK_CURSOR=Bibata-Modern-Amber
+            GTK_CURSOR_SIZE=28
+            KUMIZO_THEME="Flexoki Light"
+            WALLPAPER=flexoki-light.jpg
+            TRANSITION=simple
+            ;;
+        mocha)
+            # catppuccin mocha (setup's legacy variant).
+            SWAY_THEME=mocha
+            FOOT_THEME=catppuccin-mocha.ini
+            FOOT_COLOR=dark
+            YAZI_THEME=mocha.toml
+            VIM_SCHEME=catppuccin_mocha
+            VIM_BG=dark
+            NVIM_THEME=catppuccin
+            GTK_THEME=catppuccin-mocha-pink-standard+default
+            GTK_DARK=1
+            GNOME_SCHEME=prefer-dark
+            GTK_CURSOR=Bibata-Modern-Ice
+            GTK_CURSOR_SIZE=32
+            KUMIZO_THEME="Catppuccin Mocha"
+            WALLPAPER=mocha.jpg
+            TRANSITION=simple
+            ;;
+        aurora)
+            # Aurora, the shell's GREEN theme (accent #00E8C6, kumi theme.rs palette).
+            SWAY_THEME=aurora
+            FOOT_THEME=aurora.ini
+            FOOT_COLOR=dark
+            YAZI_THEME=aurora.toml
+            VIM_SCHEME=aurora
+            VIM_BG=dark
+            NVIM_THEME=aurora
+            GTK_THEME=ID86-Aurora
+            GTK_DARK=1
+            GNOME_SCHEME=prefer-dark
+            GTK_CURSOR=Bibata-Modern-Ice
+            GTK_CURSOR_SIZE=32
+            KUMIZO_THEME="Aurora"
+            WALLPAPER=aurora.jpg
+            TRANSITION=wave
+            ;;
+        github-light)
+            # GitHub Light (Primer light scale).
+            SWAY_THEME=github-light
+            FOOT_THEME=github-light.ini
+            FOOT_COLOR=light
+            YAZI_THEME=github-light.toml
+            VIM_SCHEME=github
+            VIM_BG=light
+            NVIM_THEME=github_light
+            GTK_THEME=ID86-Github
+            GTK_DARK=0
+            GNOME_SCHEME=prefer-light
+            GTK_CURSOR=Bibata-Modern-Classic
+            GTK_CURSOR_SIZE=28
+            KUMIZO_THEME="GitHub Light"
+            WALLPAPER=github-light.jpg
+            TRANSITION=simple
+            ;;
+        nord)
+            # Nord (https://www.nordtheme.com).
+            SWAY_THEME=nord
+            FOOT_THEME=nord.ini
+            FOOT_COLOR=dark
+            YAZI_THEME=nord.toml
+            VIM_SCHEME=nord
+            VIM_BG=dark
+            NVIM_THEME=nord
+            GTK_THEME=Nordic
+            GTK_DARK=1
+            GNOME_SCHEME=prefer-dark
+            GTK_CURSOR=Bibata-Modern-Ice
+            GTK_CURSOR_SIZE=32
+            KUMIZO_THEME="Nord"
+            WALLPAPER=nord.jpg
+            TRANSITION=simple
+            ;;
+        tokyo-night)
+            # Tokyo Night, night variant (folke/tokyonight.nvim).
+            SWAY_THEME=tokyo-night
+            FOOT_THEME=tokyonight-night.ini
+            FOOT_COLOR=dark
+            YAZI_THEME=tokyonight-night.toml
+            VIM_SCHEME=tokyonight-night
+            VIM_BG=dark
+            NVIM_THEME=tokyonight
+            GTK_THEME=Tokyonight-Dark
+            GTK_DARK=1
+            GNOME_SCHEME=prefer-dark
+            GTK_CURSOR=Bibata-Modern-Ice
+            GTK_CURSOR_SIZE=32
+            KUMIZO_THEME="Tokyo Night"
+            WALLPAPER=tokyo-night.jpg
+            TRANSITION=center
+            ;;
+        gruvbox-dark)
+            # Gruvbox Dark, official palette (morhetz/gruvbox).
+            SWAY_THEME=gruvbox-dark
+            FOOT_THEME=gruvbox-dark.ini
+            FOOT_COLOR=dark
+            YAZI_THEME=gruvbox-dark.toml
+            VIM_SCHEME=gruvbox-dark
+            VIM_BG=dark
+            NVIM_THEME=gruvbox
+            GTK_THEME=ID86-Gruvbox
+            GTK_DARK=1
+            GNOME_SCHEME=prefer-dark
+            GTK_CURSOR=Bibata-Modern-Amber
+            GTK_CURSOR_SIZE=32
+            KUMIZO_THEME="Gruvbox"
+            WALLPAPER=gruvbox-dark.jpg
+            TRANSITION=simple
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+    return 0
+}
+
+# --- fzf colors (snippet sourced by ~/.zshrc) ----------------------------
+fzf_block_for() {
+    case "$1" in
+        flexoki-light|light)
+            # official flexoki: https://github.com/kepano/flexoki/tree/main/fzf
+            cat << 'EOF'
+export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS
+--color=fg:#B7B5AC,bg:#FFFCF0,hl:#100F0F
+--color=fg+:#B7B5AC,bg+:#F2F0E5,hl+:#100F0F
+--color=border:#AF3029,header:#100F0F,gutter:#FFFCF0
+--color=spinner:#3AA99F,info:#3AA99F,separator:#F2F0E5
+--color=pointer:#D0A215,marker:#D14D41,prompt:#D0A215"
+EOF
+            ;;
+        mocha)
+            # no --color override: fzf defaults, designed for dark backgrounds
+            cat << 'EOF'
+# no --color override (fzf defaults, designed for dark backgrounds)
+EOF
+            ;;
+        aurora)
+            # derived from the kumi shell palette (theme.rs)
+            cat << 'EOF'
+export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS
+--color=bg+:#1c2333,bg:#0b0e14,spinner:#00e8c6,hl:#6b7794
+--color=fg:#e6edf7,header:#6b7794,info:#8b7cff,pointer:#4ade80
+--color=marker:#4ade80,fg+:#e6edf7,prompt:#00e8c6,hl+:#4ade80"
+EOF
+            ;;
+        github-light)
+            # projekt0n/github-theme-contrib themes/fzf/github_light
+            cat << 'EOF'
+export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS
+--color=fg:#656d76,bg:#ffffff,hl:#ffffff
+--color=fg+:#1F2328,bg+:#deeeff,hl+:#953800
+--color=info:#9a6700,prompt:#0969da,pointer:#8250df
+--color=marker:#1a7f37,spinner:#24292f,header:#eff1f3"
+EOF
+            ;;
+        nord)
+            # https://github.com/junegunn/fzf nord-vim-derived
+            cat << 'EOF'
+export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS
+--color=bg+:#3B4252,bg:#2E3440,spinner:#81A1C1,hl:#616E88
+--color=fg:#D8DEE9,header:#616E88,info:#81A1C1,pointer:#81A1C1
+--color=marker:#81A1C1,fg+:#D8DEE9,prompt:#81A1C1,hl+:#81A1C1"
+EOF
+            ;;
+        tokyo-night)
+            # --color values taken from extras/fzf/tokyonight_night.sh, without
+            # the --layout/--border flags that would override .zshrc defaults
+            cat << 'EOF'
+export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS
+--color=bg+:#283457,bg:#16161e,border:#27a1b9,fg:#c0caf5
+--color=gutter:#16161e,header:#ff9e64,hl+:#2ac3de,hl:#2ac3de
+--color=info:#545c7e,marker:#ff007c,pointer:#ff007c,prompt:#2ac3de
+--color=query:#c0caf5:regular,scrollbar:#27a1b9,separator:#ff9e64
+--color=spinner:#ff007c"
+EOF
+            ;;
+        gruvbox-dark)
+            # gruvbox dark palette: bg0/bg1, fg1/yellow/blue/purple accents
+            cat << 'EOF'
+export FZF_DEFAULT_OPTS="$FZF_DEFAULT_OPTS
+--color=fg:#ebdbb2,bg:#282828,hl:#fabd2f
+--color=fg+:#ebdbb2,bg+:#3c3836,hl+:#fabd2f
+--color=info:#83a598,prompt:#d3869b,pointer:#fb4934
+--color=marker:#b8bb26,spinner:#fabd2f,header:#83a598"
+EOF
+            ;;
+    esac
+}
+
+# --- herdr theme ----------------------------------------------------------
+# herdr does not accept a theme file: either a built-in theme
+# (catppuccin, nord, tokyo-night...), or overriding the 19 color tokens
+# through [theme.custom].
+#
+# CURRENT MODE: dedicated palettes (built-in theme + [theme.custom], see
+# below) so the herdr rendering follows the system theme. `HERDR_THEME=terminal`
+# forces `name = "terminal"` for every theme: herdr then follows the host
+# terminal (foot) ANSI slots, which stays consistent with the host window but
+# gives coarse tokens (active_row_bg = ANSI DarkGray, overlay0 = Gray,
+# overlay1 = White...) and depends on foot's live palette, which is not
+# reloaded on the fly.
+HERDR_THEME="${HERDR_THEME:-auto}"
+
+# herdr token mapping -> roles (see herdr's src/app/state.rs):
+#   panel_bg      = main background          sidebar_bg    = sidebar background
+#   active_row_bg = active row               selection_bg  = navigator cursor
+#   surface0/1    = BACKGROUNDS (active/hover item) surface_dim = separators
+#   overlay0      = muted text (numbers, secondary info)
+#   overlay1      = muted text with more contrast (tabs, buttons)
+#   text          = main text                subtext0     = subtle text (line numbers)
+#   accent        = accent color             red..peach    = statuses
+#
+# Note: overlay0/overlay1 are TEXT, not backgrounds. On a light theme they
+# must be darker than the background (the opposite of a dark theme).
+# Contrast checked against panel_bg AND surface0 (>= 3:1).
+herdr_block_for() {
+    if [[ "$HERDR_THEME" == "terminal" ]]; then
+        cat << 'EOF'
+[theme]
+name = "terminal"
+auto_switch = false
+EOF
+        return
+    fi
+    case "$1" in
+        flexoki-light|light)
+            # flexoki (light): paper > base_50 > base_100 > base_150 > base_200 scale
+            cat << 'EOF'
+[theme]
+name = "one-light"
+auto_switch = false
+
+[theme.custom]
+panel_bg = "#FFFCF0"
+sidebar_bg = "#F2F0E5"
+active_row_bg = "#E6E4D9"
+selection_bg = "#DAD8CE"
+surface0 = "#E6E4D9"
+surface1 = "#DAD8CE"
+surface_dim = "#F2F0E5"
+overlay0 = "#6F6E69"
+overlay1 = "#575653"
+text = "#100F0F"
+subtext0 = "#575653"
+accent = "#205EA6"
+red = "#AF3029"
+green = "#66800B"
+yellow = "#AD8301"
+blue = "#205EA6"
+teal = "#24837B"
+mauve = "#5E409D"
+peach = "#BC5215"
+EOF
+            ;;
+        mocha)
+            # catppuccin mocha: built-in palette, only the muted text tokens
+            # are overridden (built-in overlay0 #6C7086 = 2.57:1 on
+            # surface0: inactive tabs become unreadable).
+            cat << 'EOF'
+[theme]
+name = "catppuccin"
+auto_switch = false
+
+[theme.custom]
+overlay0 = "#9399B2"
+overlay1 = "#BAC2DE"
+EOF
+            ;;
+        aurora)
+            # aurora (dark): bg > bg_2 > ui > ui_2 > ui_3 scale
+            # subtext0 adjusted from $tx_2 (#6B7794, 4.32:1) to pass AA (5.41:1)
+            cat << 'EOF'
+[theme]
+name = "one-dark"
+auto_switch = false
+
+[theme.custom]
+panel_bg = "#0B0E14"
+sidebar_bg = "#131824"
+active_row_bg = "#1C2333"
+selection_bg = "#243049"
+surface0 = "#1C2333"
+surface1 = "#232B40"
+surface_dim = "#131824"
+overlay0 = "#6B7794"
+overlay1 = "#94A3B8"
+text = "#E6EDF7"
+subtext0 = "#7A88A3"
+accent = "#00E8C6"
+red = "#FF5C7A"
+green = "#4ADE80"
+yellow = "#FCD34D"
+blue = "#8B7CFF"
+teal = "#00E8C6"
+mauve = "#C4B5FD"
+peach = "#FBBF24"
+EOF
+            ;;
+        github-light)
+            # github light: paper > base_50 > base_100 > base_150 > base_200 scale
+            cat << 'EOF'
+[theme]
+name = "one-light"
+auto_switch = false
+
+[theme.custom]
+panel_bg = "#FFFFFF"
+sidebar_bg = "#F6F8FA"
+active_row_bg = "#EAEFF2"
+selection_bg = "#DDF4FF"
+surface0 = "#EAEFF2"
+surface1 = "#D0D7DE"
+surface_dim = "#F6F8FA"
+overlay0 = "#57606A"
+overlay1 = "#424A53"
+text = "#1F2328"
+subtext0 = "#57606A"
+accent = "#0969DA"
+red = "#CF222E"
+green = "#116329"
+yellow = "#4D2D00"
+blue = "#0969DA"
+teal = "#1B7C83"
+mauve = "#8250DF"
+peach = "#953800"
+EOF
+            ;;
+        nord)
+            # nord: built-in palette + fixed muted text (built-in overlay0
+            # #4C566A = 1.36:1 on surface0).
+            cat << 'EOF'
+[theme]
+name = "nord"
+auto_switch = false
+
+[theme.custom]
+overlay0 = "#81A1C1"
+overlay1 = "#D8DEE9"
+EOF
+            ;;
+        tokyo-night)
+            # tokyo night: built-in palette + fixed muted text (built-in
+            # overlay0 #565F89 = 2.35:1 on surface0).
+            cat << 'EOF'
+[theme]
+name = "tokyo-night"
+auto_switch = false
+
+[theme.custom]
+overlay0 = "#8A93B8"
+overlay1 = "#A9B1D6"
+EOF
+            ;;
+        gruvbox-dark)
+            # gruvbox dark: bg0 > bg0_s > bg1 > bg2 > bg3 scale
+            cat << 'EOF'
+[theme]
+name = "one-dark"
+auto_switch = false
+
+[theme.custom]
+panel_bg = "#282828"
+sidebar_bg = "#32302F"
+active_row_bg = "#3C3836"
+selection_bg = "#504945"
+surface0 = "#3C3836"
+surface1 = "#504945"
+surface_dim = "#32302F"
+overlay0 = "#A89984"
+overlay1 = "#BDAE93"
+text = "#EBDBB2"
+subtext0 = "#928374"
+accent = "#FABD2F"
+red = "#FB4934"
+green = "#B8BB26"
+yellow = "#FABD2F"
+blue = "#83A598"
+teal = "#8EC07C"
+mauve = "#D3869B"
+peach = "#FE8019"
+EOF
+            ;;
+    esac
+}
+
+# Writes the [theme*] block into the herdr config: removes existing
+# [theme*] sections (to avoid duplicate TOML tables), then inserts the
+# managed block. Validated via `herdr config check` and restored on error.
+apply_herdr_theme() {
+    local theme=$1
+    local cfg="$HOME/.config/herdr/config.toml"
+    command -v herdr >/dev/null 2>&1 || return 0
+    [[ -f "$cfg" ]] || return 0
+
+    local block
+    block=$(herdr_block_for "$theme")
+    [[ -n "$block" ]] || return 0
+
+    local bak
+    bak=$(mktemp) || return 0
+    cp "$cfg" "$bak"
+
+    # Remove [theme*] sections and markers without leaving orphan blank
+    # lines (buffer: blanks are only flushed when a real line follows ->
+    # no accumulation across runs).
+    awk '
+        BEGIN { skip = 0; blanks = 0 }
+        /^# --- (BEGIN|END) herdr theme/ { next }
+        /^\[theme/ { skip = 1; next }
+        skip == 1 {
+            if ($0 ~ /^\[/) { skip = 0 } else { next }
+        }
+        {
+            if ($0 ~ /^[[:space:]]*$/) { blanks++; next }
+            while (blanks > 0) { print ""; blanks-- }
+            print
+        }
+    ' "$cfg" > "$cfg.tmp"
+
+    {
+        printf '\n# --- BEGIN herdr theme (generated by change-theme) ---\n'
+        printf '%s\n' "$block"
+        printf '# --- END herdr theme ---\n'
+    } >> "$cfg.tmp"
+
+    mv "$cfg.tmp" "$cfg"
+
+    if ! herdr config check >/dev/null 2>&1; then
+        cp "$bak" "$cfg"
+        rm -f "$bak"
+        echo "    [!] invalid herdr theme: config restored" >&2
+        return 1
+    fi
+    rm -f "$bak"
+
+    herdr server reload-config >/dev/null 2>&1 || true
+}
+
+# --- Application ---------------------------------------------------------
+apply_theme() {
+    local theme
+    theme=$(normalize_theme "$1")
+    load_theme "$theme" || { echo "Unknown theme: $theme" >&2; return 1; }
+
+    # sway: include the theme + reload
+    if [[ -f "$HOME/.config/sway/config" ]]; then
+        sed -i "s|^include ~/.config/sway/themes/.*|include ~/.config/sway/themes/$SWAY_THEME|" \
+            "$HOME/.config/sway/config"
+    fi
+    swaymsg reload >/dev/null 2>&1 || true
+
+    # awww: theme's still image + transition
+    export WAYLAND_DISPLAY="${WAYLAND_DISPLAY:-wayland-1}"
+    pgrep -x awww-daemon >/dev/null || {
+        setsid -f awww-daemon </dev/null >/dev/null 2>&1
+        sleep 1
+    }
+    awww img "$HOME/.wallpaper/$WALLPAPER" --transition-type "$TRANSITION" 2>/dev/null || true
+    mkdir -p "$HOME/.cache"
+    echo "$WALLPAPER" > "$HOME/.cache/awww-index"
+
+    # foot: include the .ini + initial color theme, then reload only the
+    # colors in running instances (SIGUSR1 = [colors], SIGUSR2 = [colors2]).
+    # Other foot settings (font, padding, keybinds) still need a restart.
+    if [[ -f "$HOME/.config/foot/foot.ini" ]]; then
+        sed -i \
+            -e "s|^include=~/.config/foot/themes/.*|include=~/.config/foot/themes/$FOOT_THEME|" \
+            -e "s|^initial-color-theme=.*|initial-color-theme=$FOOT_COLOR|" \
+            "$HOME/.config/foot/foot.ini"
+        pkill -SIGUSR1 -x foot 2>/dev/null || true
+    fi
+
+    # yazi
+    [[ -f "$HOME/.config/yazi/themes/$YAZI_THEME" ]] && \
+        cp "$HOME/.config/yazi/themes/$YAZI_THEME" "$HOME/.config/yazi/theme.toml"
+
+    # vim: active line only (leave commented-out alternatives untouched)
+    if [[ -f "$HOME/.vimrc" ]]; then
+        sed -i \
+            -e "s|^set background=.*|set background=$VIM_BG|" \
+            -e "s|^\(\s*\)colorscheme .*|\1colorscheme $VIM_SCHEME|" \
+            "$HOME/.vimrc"
+    fi
+
+    # nvim: base46 theme + reload highlights
+    if [[ -f "$HOME/.config/nvim/lua/chadrc.lua" ]]; then
+        sed -i "s|^\(\s*\)theme = .*|\1theme = \"$NVIM_THEME\",|" \
+            "$HOME/.config/nvim/lua/chadrc.lua"
+        nvim --headless +'lua require("base46").load_all_highlights()' +qa 2>/dev/null || true
+    fi
+
+    # GTK3/4: single template (theme, icons, font, cursor)
+    mkdir -p "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0"
+    local v
+    for v in 3.0 4.0; do
+        cat > "$HOME/.config/gtk-$v/settings.ini" << EOF
+[Settings]
+gtk-theme-name=$GTK_THEME
+gtk-icon-theme-name=Luv
+gtk-font-name=Adwaita Sans 11
+gtk-cursor-theme-name=$GTK_CURSOR
+gtk-cursor-theme-size=$GTK_CURSOR_SIZE
+gtk-application-prefer-dark-theme=$GTK_DARK
+gtk-xft-antialias=1
+gtk-xft-hinting=1
+gtk-xft-hintstyle=hintslight
+gtk-xft-rgba=none
+EOF
+    done
+
+    # gsettings
+    gsettings set org.gnome.desktop.interface icon-theme 'Luv' 2>/dev/null || true
+    gsettings set org.gnome.desktop.interface color-scheme "$GNOME_SCHEME" 2>/dev/null || true
+    gsettings set org.gnome.desktop.interface gtk-theme "$GTK_THEME" 2>/dev/null || true
+    gsettings set org.gnome.desktop.interface cursor-theme "$GTK_CURSOR" 2>/dev/null || true
+    gsettings set org.gnome.desktop.interface cursor-size "$GTK_CURSOR_SIZE" 2>/dev/null || true
+    # Apps launched through systemd/D-Bus inherit the theme cursor, not the
+    # environment frozen at login.
+    if command -v dbus-update-activation-environment >/dev/null; then
+        dbus-update-activation-environment XCURSOR_THEME="$GTK_CURSOR" XCURSOR_SIZE="$GTK_CURSOR_SIZE" 2>/dev/null || true
+    fi
+
+    # kumizo: switch the shell to the theme
+    kumizo service theme set "$KUMIZO_THEME" >/dev/null 2>&1 || true
+
+    # herdr: work terminal theme
+    apply_herdr_theme "$theme"
+
+    # state + fzf colors
+    echo "$theme" > "$STATE_FILE"
+    { echo "# written by change-theme ($theme)"; fzf_block_for "$theme"; } > "$FZF_FILE"
+
+    echo "Theme $theme applied."
+    echo "foot colors reloaded (SIGUSR1); restart foot for other settings."
+}
+
+# --- Current theme -------------------------------------------------------
+current_theme() {
+    if [[ -f "$STATE_FILE" ]]; then
+        normalize_theme "$(cat "$STATE_FILE")"
+        return
+    fi
+    # Fallback detection: active sway include.
+    local t dir
+    for t in $THEMES; do
+        load_theme "$t" >/dev/null 2>&1 || continue
+        dir=$SWAY_THEME
+        if grep -q "themes/$dir" "$HOME/.config/sway/config" 2>/dev/null; then
+            echo "$t"
+            return
+        fi
+    done
+    echo "mocha"
+}
+
+# --- Modes ---------------------------------------------------------------
+case "${1:-}" in
+    flexoki-light|light|mocha|aurora|github-light|nord|tokyo-night|gruvbox-dark)
+        apply_theme "$1"
+        ;;
+    list)
+        echo "Available themes:"
+        echo "  mocha          catppuccin mocha (dark, default)"
+        echo "  flexoki-light  flexoki light"
+        echo "  aurora         aurora (green, accent #00e8c6)"
+        echo "  github-light   github light (Primer)"
+        echo "  nord           nord"
+        echo "  tokyo-night    tokyo night"
+        echo "  gruvbox-dark   gruvbox dark (morhetz)"
+        echo ""
+        echo "Usage: change-theme <theme>|list|status|toggle"
+        ;;
+    status)
+        echo "current theme: $(current_theme)"
+        ;;
+    toggle)
+        cur=$(current_theme)
+        next=""
+        found=0
+        for t in $THEMES; do
+            if [[ $found -eq 1 ]]; then next="$t"; break; fi
+            [[ "$t" == "$cur" ]] && found=1
+        done
+        # end of list or unknown theme -> back to the first (mocha)
+        [[ -z "$next" ]] && next="${THEMES%% *}"
+        apply_theme "$next"
+        ;;
+    random)
+        echo "Mode removed: no more random theme (use 'toggle' or a name)." >&2
+        exit 1
+        ;;
+    *)
+        echo "Usage: change-theme <theme>|list|status|toggle"
+        echo "Themes: $THEMES"
+        exit 1
+        ;;
+esac

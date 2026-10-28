@@ -1,0 +1,6 @@
+[Unit]
+Description=Next wallpaper from the pool (awww)
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/awww-cycle next

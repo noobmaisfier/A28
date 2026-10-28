@@ -1,0 +1,131 @@
+# GitHub Light for yazi - NO EXISTING PORT, built from the
+# setup's flexoki-light.toml template with the Primer light scale (github_light).
+# Flexoki Light for yazi - https://stephango.com/flexoki
+# Docs: https://yazi-rs.github.io/docs/configuration/theme (v26.9.1)
+# Choice: series 600 for text on a light background (contrast),
+# series 400 for vivid accents (markers, errors).
+
+[app]
+overall = { bg = "#FFFFFF" }
+
+[mgr]
+cwd               = { fg = "#1F2328", bold = true }
+find_keyword      = { fg = "#1F2328", bg = "#FFF8C5" }
+find_position     = { fg = "#57606A" }
+symlink_target    = { fg = "#1B7C83" }
+marker_copied     = { fg = "#116329", bg = "#116329" }
+marker_cut        = { fg = "#CF222E", bg = "#CF222E" }
+marker_marked     = { fg = "#8250DF", bg = "#8250DF" }
+marker_selected   = { fg = "#4D2D00", bg = "#4D2D00" }
+count_copied      = { fg = "#FFFFFF", bg = "#116329" }
+count_cut         = { fg = "#FFFFFF", bg = "#CF222E" }
+count_selected    = { fg = "#1F2328", bg = "#4D2D00" }
+border_symbol     = "│"
+border_style      = { fg = "#AFB8C1" }
+
+[indicator]
+parent  = { fg = "#1F2328", bg = "#EAEFF2" }
+current = { fg = "#0969DA", bg = "#EAEFF2", bold = true }
+preview = { underline = true }
+padding = { open = "", close = "" }
+
+[tabs]
+active   = { fg = "#FFFFFF", bg = "#0969DA", bold = true }
+inactive = { fg = "#57606A", bg = "#EAEFF2" }
+sep_inner = { open = "", close = "" }
+sep_outer = { open = "", close = "" }
+
+[mode]
+normal_main = { fg = "#FFFFFF", bg = "#116329", bold = true }
+normal_alt  = { fg = "#116329" }
+select_main = { fg = "#1F2328", bg = "#633C01", bold = true }
+select_alt  = { fg = "#4D2D00" }
+unset_main  = { fg = "#FFFFFF", bg = "#8C959F", bold = true }
+unset_alt   = { fg = "#8C959F" }
+
+[status]
+sep_left  = { open = "", close = "" }
+sep_right = { open = "", close = "" }
+
+overall         = { fg = "#1F2328", bg = "#F6F8FA" }
+perm_type       = { fg = "#57606A" }
+perm_read       = { fg = "#116329" }
+perm_write      = { fg = "#4D2D00" }
+perm_exec       = { fg = "#CF222E" }
+perm_sep        = { fg = "#8C959F" }
+progress_label  = { fg = "#1F2328", bold = true }
+progress_normal = { fg = "#116329", bg = "#EAEFF2" }
+progress_error  = { fg = "#CF222E", bg = "#EAEFF2" }
+
+[which]
+cols            = 3
+mask            = { bg = "#EAEFF2" }
+cand            = { fg = "#116329" }
+rest            = { fg = "#1F2328" }
+desc            = { fg = "#1B7C83" }
+separator       = " ➜ "
+separator_style = { fg = "#57606A" }
+
+[confirm]
+border = { fg = "#AFB8C1" }
+title  = { fg = "#0969DA", bold = true }
+body   = { fg = "#1F2328" }
+list   = { fg = "#57606A" }
+btn_yes = { fg = "#FFFFFF", bg = "#116329" }
+btn_no  = { fg = "#1F2328", bg = "#EAEFF2" }
+
+[spot]
+border   = { fg = "#AFB8C1" }
+title    = { fg = "#0969DA", bold = true }
+tbl_col  = { fg = "#1F2328", bg = "#EAEFF2", bold = true }
+tbl_cell = { fg = "#1F2328", bg = "#D0D7DE" }
+
+[notify]
+title_info  = { fg = "#1B7C83", bold = true }
+title_warn  = { fg = "#4D2D00", bold = true }
+title_error = { fg = "#CF222E", bold = true }
+
+[pick]
+border   = { fg = "#AFB8C1" }
+active   = { fg = "#1F2328", bg = "#EAEFF2", bold = true }
+inactive = { fg = "#57606A" }
+
+[input]
+border   = { fg = "#0969DA" }
+title    = { fg = "#0969DA", bold = true }
+value    = { fg = "#1F2328" }
+selected = { bg = "#EAEFF2" }
+
+[cmp]
+border       = { fg = "#AFB8C1" }
+active       = { fg = "#FFFFFF", bg = "#0969DA" }
+inactive     = { fg = "#1F2328" }
+icon_file    = ""
+icon_folder  = ""
+icon_command = ""
+
+[tasks]
+border  = { fg = "#AFB8C1" }
+title   = { fg = "#0969DA", bold = true }
+hovered = { fg = "#1F2328", bg = "#EAEFF2" }
+
+[help]
+border  = { fg = "#AFB8C1" }
+chord   = { fg = "#116329", bold = true }
+action  = { fg = "#57606A" }
+hovered = { fg = "#1F2328", bg = "#EAEFF2" }
+
+[filetype]
+rules = [
+	# Images / audio / video
+	{ mime = "image/*", fg = "#8250DF" },
+	{ mime = "{audio,video}/*", fg = "#8250DF" },
+	# Empty files
+	{ mime = "inode/empty", fg = "#8C959F" },
+	# Broken links
+	{ url = "*", is = "orphan", fg = "#CF222E", bold = true },
+	# Executables
+	{ url = "*", is = "exec", fg = "#116329", bold = true },
+	# Folders
+	{ url = "*/", fg = "#0969DA", bold = true },
+]

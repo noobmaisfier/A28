@@ -1,0 +1,9 @@
+[Unit]
+Description=Wallpaper slideshow every 25 min
+
+[Timer]
+OnBootSec=25min
+OnUnitActiveSec=25min
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,53 @@
+# Tokyo Night (night) Theme for Sway
+# Palette: https://github.com/folke/tokyonight.nvim (night variant)
+
+set $cursor Bibata-Modern-Ice
+set $cursor_size 32
+seat * xcursor_theme $cursor $cursor_size
+
+# Tokyo Night night (lua/tokyonight/colors/night.lua)
+set $bg         #1A1B26
+set $bg_dark    #16161E
+set $bg_hi      #292E42
+set $fg         #C0CAF5
+set $fg_dark    #A9B1D6
+set $comment    #565F89
+set $black      #15161E
+set $red        #F7768E
+set $orange     #FF9E64
+set $yellow     #E0AF68
+set $green      #9ECE6A
+set $cyan       #7DCFFF
+set $blue       #7AA2F7
+set $blue_dark   #3D59A1
+set $purple     #BB9AF7
+set $magenta    #FF007C
+set $teal       #1ABC9C
+
+# Roles
+set $tx         $fg
+set $tx_2       $fg_dark
+set $tx_3       $comment
+set $bg_2       $bg_dark
+set $ui         $bg_hi
+set $ui_2       #3B4261
+set $ui_3       #414868
+
+# Window colors for Sway
+#                       border    bg        text      indicator child_border
+client.focused          $blue_dark $bg       $tx       $blue_dark $blue_dark
+client.focused_inactive $ui_2     $bg       $tx_2     $ui_2     $ui_2
+client.unfocused        $ui_2     $bg       $tx_2     $ui_2     $ui_2
+client.urgent           $red      $bg       $red      $orange   $red
+client.placeholder      $ui_2     $bg       $tx_3     $ui_2     $ui_2
+client.background       $bg
+
+# Semantic color aliases
+set $accent     $blue
+set $warning    $orange
+set $error      $red
+set $success    $green
+set $info       $cyan
+
+# Wallpaper: managed by awww (change-theme/set-*.sh shows the theme's fixed
+# image, slideshow via the awww-cycle timer).
