@@ -73,10 +73,39 @@ choose_swayfs() {
     export ID86_SWAYFS
 }
 
+# Binary vs source for the two compiled modules. ID86_SHELL=1 / ID86_AWWW=1
+# style overrides are not used: binary|source|skip, scriptable.
+choose_mode() {
+    local var=$1 label=$2 answer=""
+
+    if [[ -n "${!var:-}" ]]; then
+        return
+    fi
+    printf -v "$var" %s binary
+
+    if [[ ! -t 0 || ! -r /dev/tty ]]; then
+        export "$var"
+        return
+    fi
+
+    read -r -p "$label — [B]inary, [c]ompile, [s]kip? [B] " answer </dev/tty || true
+    case "$answer" in
+        c|C|compile)    printf -v "$var" %s source ;;
+        s|S|skip)       printf -v "$var" %s skip ;;
+    esac
+    export "$var"
+}
+
 choose_nvim
 choose_swayfs
+choose_mode ID86_SHELL "Kumi shell"
+# On Arch, awww is a regular package (pacman), so binary/source means nothing.
+if [[ "$ID86_DISTRO" == debian ]]; then
+    choose_mode ID86_AWWW "awww wallpaper"
+fi
 
 echo "==> A28 rice (distro: $ID86_DISTRO)"
+echo "    shell: $ID86_SHELL${ID86_AWWW:+, awww: $ID86_AWWW}"
 
 run_module() {
     local module=$1
@@ -114,9 +143,10 @@ run_module rust
 run_module node
 run_module swayfs
 run_module awww
+# zsh before dotfiles: OMZ must never be the last writer of ~/.zshrc.
+run_module zsh
 run_module dotfiles
 run_module shell
-run_module zsh
 run_module fonts
 run_module herdr
 run_module theme

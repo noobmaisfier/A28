@@ -26,7 +26,7 @@ curl -fsSL https://github.com/noobmaisfier/A28/archive/refs/heads/main.tar.gz | 
   && cd /tmp/A28-main && chmod +x setup.sh && ./setup.sh
 ```
 
-During the installation, two questions are asked:
+During the installation, four questions are asked:
 
 - **swayfs**: should it be installed? If another sway compositor is already
   present, it offers to replace it — no by default.
@@ -35,11 +35,42 @@ During the installation, two questions are asked:
 - **Neovim**: should the rice config be installed? If `~/.config/nvim` already
   exists, it offers to keep it — no by default.
 
+- **Kumi shell** and, on Debian, **awww** (wallpaper daemon): use a
+  **prebuilt binary**, **compile from source**, or **skip**. Binary is the
+  default; if the release is unreachable, the installer falls back to
+  compiling automatically. On Arch, awww comes from pacman, so no question.
+
 To script the answers:
 
 ```bash
-ID86_SWAYFS=1|0 ID86_NVIM=1|0 ./setup.sh
+ID86_SWAYFS=1|0 ID86_NVIM=1|0 \
+ID86_SHELL=binary|source|skip ID86_AWWW=binary|source|skip ./setup.sh
 ```
+
+## Prebuilt binaries
+
+`shell` and `awww` would otherwise need a full Rust toolchain. The
+[`binaries` workflow](.github/workflows/binaries.yml) builds them on every
+change to `dotfiles/share/shell/` and publishes the assets to the rolling
+release [`binaries-latest`](https://github.com/noobmaisfier/A28/releases/tag/binaries-latest):
+
+| asset | contents |
+|---|---|
+| `kumi-linux-x86_64.tar.gz`, `kumi-linux-aarch64.tar.gz` | `kumi`, `kumi-lockscreen`, `kumizo` |
+| `awww-linux-x86_64.tar.gz`, `awww-linux-aarch64.tar.gz` | `awww`, `awww-daemon` |
+| `SHA256SUMS` | checksums, verified by the installer |
+
+The installer checks the checksum before extracting and refuses an asset that
+is not listed in `SHA256SUMS`. To pin a specific release (or use a mirror):
+
+```bash
+A28_BIN_TAG=<tag> ./setup.sh
+A28_BIN_BASE=https://mirror.example/a28 ./setup.sh
+```
+
+swayfs has no prebuilt binary: it links against a pinned wlroots/scenefx and
+installs to `/usr/local`, so it is always built (or skipped) — plan for a long
+`meson` build on Debian, especially on a small VPS.
 
 ## `setup.sh` or `me.sh`?
 
@@ -51,6 +82,11 @@ nvim plugins + Mason, sway reload, XDG directories.
 `me.sh` is `setup.sh` plus my personal stuff. It is not run by default.
 
 Existing configs are backed up to `~/.backup-A28/<date>`.
+
+`~/.zshrc` always ends up as the versioned `dotfiles/.zshrc`: oh-my-zsh is
+installed with `--keep-zshrc` and the `zsh` module runs before `dotfiles`, so
+the OMZ template can never overwrite it. If a previous install left OMZ's
+default config in place, the rice one is in `~/.zshrc.pre-oh-my-zsh`.
 
 ## Themes
 
@@ -77,6 +113,10 @@ The shell is built on the [kumizo](https://github.com/noobmaisfier/kumizo) SDK.
 Its source is vendored in `dotfiles/share/shell/kumi/` and installed to
 `~/.local/share/shell/kumi`; `setup.sh` replaces that copy on every install
 (backup in `~/.backup-A28/<date>/share-shell`) and rebuilds it if needed.
+
+Install it from source rather than from the prebuilt release if you plan to
+edit it: `ID86_SHELL=source ./setup.sh` (the binary mode installs a snapshot
+and does not need cargo).
 
 To modify or extend kumi, see the upstream docs:
 - [kumizo Guide](https://github.com/noobmaisfier/kumizo/blob/main/docs/GUIDE.md)

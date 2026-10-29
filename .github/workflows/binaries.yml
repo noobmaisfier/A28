@@ -1,0 +1,164 @@
+name: binaries
+
+# Builds the prebuilt binaries used by src/shell.sh and src/awww.sh
+# ("binary" install mode) and publishes them to the rolling release
+# "binaries-latest". Add A28_BIN_TAG=<tag> to pin another release.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "dotfiles/share/shell/**"
+      - ".github/workflows/binaries.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: binaries-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  AWWW_TAG: v0.12.1
+  KUMIZO_VERSION: "0.12.0"
+  RELEASE_TAG: binaries-latest
+
+jobs:
+  kumi:
+    name: kumi (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            arch: x86_64
+          - runner: ubuntu-24.04-arm
+            arch: aarch64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            build-essential pkg-config \
+            libasound2-dev libxkbcommon-dev libxkbcommon-x11-dev \
+            libwayland-dev wayland-protocols libfontconfig1-dev libpam0g-dev \
+            libvulkan-dev libxcb1-dev libxcb-render0-dev libxcb-shape0-dev \
+            libxcb-xfixes0-dev
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: dotfiles/share/shell/kumi -> target
+
+      # kumi + kumi-lockscreen from the vendored source, kumizo from crates.io:
+      # all three are installed by shell.sh, so ship all three in the tarball.
+      - name: Build kumi
+        run: |
+          cargo build --release --locked \
+            --manifest-path dotfiles/share/shell/kumi/Cargo.toml \
+            --bin kumi --bin kumi-lockscreen
+          cargo install --locked --root "$RUNNER_TEMP/kumizo" "kumizo@${KUMIZO_VERSION}"
+
+      - name: Package
+        run: |
+          set -eu
+          out="dist"
+          mkdir -p "$out"
+          # Fixed layout, no nested directory: awww/shell scripts extract and
+          # copy the binaries directly.
+          cp dotfiles/share/shell/kumi/target/release/kumi "$out/"
+          cp dotfiles/share/shell/kumi/target/release/kumi-lockscreen "$out/"
+          cp "$RUNNER_TEMP/kumizo/bin/kumizo" "$out/"
+          cp dotfiles/share/shell/kumi/LICENSE-* "$out/" 2>/dev/null || true
+          tar -C "$out" -czf "dist/kumi-linux-${{ matrix.arch }}.tar.gz" \
+            kumi kumi-lockscreen kumizo $(cd "$out" && ls LICENSE-* 2>/dev/null || true)
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: kumi-${{ matrix.arch }}
+          path: dist/*.tar.gz
+          if-no-files-found: error
+
+  awww:
+    name: awww (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            arch: x86_64
+          - runner: ubuntu-24.04-arm
+            arch: aarch64
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            build-essential pkg-config git \
+            liblz4-dev libdav1d-dev libwayland-dev wayland-protocols
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      # Upstream publishes no binaries (releases have no assets), so build the
+      # pinned tag ourselves instead of using `main`, which no longer compiles.
+      - name: Build awww
+        run: |
+          git clone --depth 1 --branch "$AWWW_TAG" https://codeberg.org/LGFae/awww awww
+          cargo build --release --locked --manifest-path awww/Cargo.toml \
+            --package awww --package awww-daemon
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: awww -> target
+
+      - name: Package
+        run: |
+          set -eu
+          out="dist"
+          mkdir -p "$out"
+          cp awww/target/release/awww awww/target/release/awww-daemon "$out/"
+          cp awww/LICENSE "$out/LICENSE" 2>/dev/null || true
+          tar -C "$out" -czf "dist/awww-linux-${{ matrix.arch }}.tar.gz" \
+            awww awww-daemon $(cd "$out" && ls LICENSE 2>/dev/null || true)
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: awww-${{ matrix.arch }}
+          path: dist/*.tar.gz
+          if-no-files-found: error
+
+  release:
+    name: publish prebuilt binaries
+    needs: [kumi, awww]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Checksums
+        run: |
+          cd dist
+          sha256sum ./*.tar.gz > SHA256SUMS
+          cat SHA256SUMS
+
+      - name: Publish rolling release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -eu
+          if ! gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release create "$RELEASE_TAG" \
+              --prerelease \
+              --title "A28 prebuilt binaries" \
+              --notes "Rolling prebuilt binaries for the A28 rice (kumi, kumizo, awww), built by .github/workflows/binaries.yml. Pin with A28_BIN_TAG=<asset release tag>."
+          fi
+          gh release upload "$RELEASE_TAG" dist/* --clobber

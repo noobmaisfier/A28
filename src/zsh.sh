@@ -5,7 +5,9 @@ set -euo pipefail
 echo "==> Installing oh-my-zsh..."
 if [[ ! -d "$HOME/.oh-my-zsh" ]]; then
     curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -o /tmp/omz-install.sh || exit 1
-    sh /tmp/omz-install.sh --unattended
+    # --keep-zshrc: without it, OMZ backs up the rice .zshrc and replaces it
+    # with its own template (the installer would otherwise be the last writer).
+    sh /tmp/omz-install.sh --unattended --keep-zshrc
     rm -f /tmp/omz-install.sh
 fi
 
@@ -19,4 +21,4 @@ for plugin in zsh-completions zsh-autosuggestions zsh-syntax-highlighting; do
     fi
 done
 
-echo "==> zsh setup done (.zshrc installed via --dotfiles)"
+echo "==> zsh setup done (plugins only; .zshrc comes from dotfiles.sh)"
