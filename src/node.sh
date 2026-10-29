@@ -6,6 +6,10 @@
 set -euo pipefail
 
 export NVM_DIR="$HOME/.nvm"
+# nvm's installer aborts when $NVM_DIR exists but is set to anything other than
+# its default ($XDG_CONFIG_HOME/nvm when that is set). Creating it first skips
+# that check, so the versioned dotfiles/.zshrc (which sources $NVM_DIR) stays valid.
+mkdir -p "$NVM_DIR"
 
 if [[ ! -s "$NVM_DIR/nvm.sh" ]]; then
     echo "==> Installing nvm..."
