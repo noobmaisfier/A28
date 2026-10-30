@@ -21,7 +21,7 @@ concurrency:
 env:
   CARGO_TERM_COLOR: always
   AWWW_TAG: v0.12.1
-  KUMIZO_VERSION: "0.12.0"
+  KUMIZO_VERSION: "0.12.1"
   RELEASE_TAG: binaries-latest
 
 jobs:
