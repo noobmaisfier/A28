@@ -146,16 +146,34 @@ API keys are not in the repository. They live in
 The repository is public: never commit a key. `.gitignore` excludes
 `secrets.sh` and `*.env`.
 
-## A few shortcuts
+## Keybindings
 
-- `Super+a`: launcher
-- `Super+w`: windows
-- `Super+c`: control center
-- `Super+Shift+t`: theme picker
-- `Super+p` / `Super+Shift+p`: next / previous wallpaper
-- `Super+b`: bar
+### Most used
+
+| Shortcut | Action |
+|---|---|
+| `Super+Return` | Open terminal |
+| `Super+q` | Kill focused window |
+| `Super+a` | Launcher |
+| `Super+w` | Window switcher/tasks |
+| `Super+c` | Control center |
+| `Super+d` | Notifications |
+| `Super+v` | Clipboard |
+| `Super+b` | Toggle bar |
+| `Super+x` | Power menu |
+| `Super+n` | Network manager (iwgtk) |
+| `Super+f` | Toggle fullscreen |
+| `Super+space` | Toggle floating |
+| `Super+Shift+l` | Lock screen |
+| `Super+Shift+s` | Screenshot (selection) |
+| `Print` | Screenshot (full) |
+| `Super+p` / `Super+Shift+p` | Next / previous wallpaper |
+| `Super+Shift+t` | Theme picker |
+| `Super+Shift+e` | Exit Sway |
 
 Media keys go through MPRIS (`playerctl play-pause`, for example).
+
+All keybindings are defined in [`dotfiles/sway/bindings.conf`](dotfiles/sway/bindings.conf).
 
 ## Links
 
