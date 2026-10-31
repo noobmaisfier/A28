@@ -79,7 +79,7 @@ load_theme() {
             GTK_CURSOR=Bibata-Modern-Ice
             GTK_CURSOR_SIZE=32
             KUMIZO_THEME="Catppuccin Mocha"
-            WALLPAPER=mocha.jpg
+            WALLPAPER=andrea-10.webp
             TRANSITION=simple
             ;;
         aurora)
