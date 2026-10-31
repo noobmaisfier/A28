@@ -14,7 +14,7 @@ pkg_deb build-essential curl pkg-config git \
     foot vim neovim zsh yazi \
     fzf bat zoxide jq ripgrep file eza fd-find tree htop \
     chafa bash-completion wl-clipboard grim slurp wlsunset brightnessctl \
-    unzip bc poppler-utils resvg rtkit \
+    iwgtk unzip bc poppler-utils resvg rtkit \
     xdg-desktop-portal-wlr xdg-desktop-portal-gtk xdg-user-dirs \
     sassc \
     thunar thunar-archive-plugin thunar-media-tags-plugin thunar-volman \

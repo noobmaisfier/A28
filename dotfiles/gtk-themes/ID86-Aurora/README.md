@@ -1,2 +1,4 @@
-# USAGE  
-Put these files in `~/.local/share/themes/flexoki` if the folder do not exist, create it.
+# USAGE
+
+Put these files in `~/.themes/ID86-Aurora` (create the folder if it does not
+exist).

@@ -24,6 +24,9 @@ if ! command -v yay &> /dev/null; then
 fi
 
 echo "==> Installing AUR packages..."
+# iwgtk is not in the official repos (network frontend for iwd).
+yay -S --needed --noconfirm iwgtk
+
 # ttf-symbola (fonts guide): upstream often down/404, failure tolerated.
 yay -S --needed --noconfirm ttf-symbola || echo "==> ttf-symbola unavailable, try again later"
 

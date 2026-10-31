@@ -26,7 +26,7 @@ curl -fsSL https://github.com/noobmaisfier/A28/archive/refs/heads/main.tar.gz | 
   && cd /tmp/A28-main && chmod +x setup.sh && ./setup.sh
 ```
 
-During the installation, four questions are asked:
+During the installation, up to four questions are asked:
 
 - **swayfs**: should it be installed? If another sway compositor is already
   present, it offers to replace it — no by default.
@@ -51,14 +51,15 @@ ID86_SHELL=binary|source|skip ID86_AWWW=binary|source|skip ./setup.sh
 
 | Program | Role |
 |---|---|
-| **Kumizo** | full shell: bar, launcher, control center, notifications, clipboard, lockscreen |
-| **Sway** | Wayland compositor |
+| **Kumizo-kit** | shell built on Kumizo: bar, launcher, control center, notifications, clipboard, lockscreen |
+| **SwayFS** | Wayland compositor (fork of Sway, optional during install) |
 | **foot** | terminal |
 | **yazi** / **Thunar** | TUI / graphical file managers |
 | **Neovim** / **Vim** | editors, with the rice config (nvim optional) |
-| **zsh** + oh-my-zsh | default shell |
+| **zsh** + oh-my-zsh | shell and prompt config |
 | **fzf, bat, eza, fd, ripgrep, zoxide, jq** | daily CLI tools |
 | **awww** + **grim/slurp** | wallpapers / slideshow + screenshots |
+| **iwgtk** | Wi-Fi GUI for iwd |
 
 `me.sh` adds the author's personal apps (Telegram, mpv, Docker, etc.).
 
@@ -124,7 +125,7 @@ padding and keybind changes still need a restart.
 
 ## Limitations
 
-Theme switching is not fully live yet: some programs, such as foot, must be
+Theme switching is not fully live yet: some already-open programs must be
 restarted for the new theme to apply.
 
 ## Customizing the shell
@@ -149,8 +150,9 @@ After editing the source, rebuild and restart the shell:
 ~/.local/share/shell/update --no-restart  # build only
 ```
 
-The palettes live in `kumi/src/theme.rs`, the windows and widgets in
-`kumi/src/main.rs`. To change theme without rebuilding, use `change-theme` or
+The palettes live in `kumi/src/theme.rs` and the windows are declared in
+`kumi/src/main.rs`; each widget lives in its own module (`bar.rs`,
+`launcher.rs`, …). To change theme without rebuilding, use `change-theme` or
 the shell's picker (`Super+Shift+t`); the choice is saved in
 `~/.config/kumi/theme`.
 

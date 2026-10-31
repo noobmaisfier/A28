@@ -14,13 +14,27 @@ cargo build --release
 # binaries: target/release/kumi, target/release/kumi-lockscreen
 ```
 
-Requirements: Linux + Wayland (Sway), Rust stable, `pkg-config`, Wayland/font/
-audio headers (Arch: `wayland libxkbcommon fontconfig alsa-lib`; Debian:
-`libwayland-dev libxkbcommon-dev libfontconfig1-dev libasound2-dev`), `libpam`
-(Arch `pam`, Debian `libpam0g-dev`) for the lockscreen, PipeWire/ALSA,
-`playerctl` (MPRIS pill), `JetBrainsMono Nerd Font` (icons).
+Requirements: Linux + Wayland (Sway, Hyprland or Niri), Rust stable, and:
 
-There are no pre-built binaries: the shell is always compiled from this source.
+Arch Linux:
+
+```bash
+sudo pacman -S --needed base-devel
+```
+
+Debian / Ubuntu:
+
+```bash
+sudo apt update
+sudo apt install -y build-essential pkg-config libwayland-dev \
+  libfontconfig1-dev libpam0g-dev
+```
+
+Runtime: PipeWire (or PulseAudio), `playerctl`, and a Nerd Font
+(`JetBrainsMono Nerd Font`).
+
+A28's installer can use a prebuilt binary; from this source tree, build with
+`~/.local/share/shell/build`.
 
 License: MIT or Apache-2.0, see `LICENSE-MIT` and `LICENSE-APACHE`.
 
@@ -28,8 +42,9 @@ License: MIT or Apache-2.0, see `LICENSE-MIT` and `LICENSE-APACHE`.
 
 | File | Window / feature |
 |---|---|
-| `bar.rs` | Top bar (time only) + MPRIS media pill + RAM/volume/battery cluster |
+| `bar.rs` | Top bar: clock, MPRIS media pill, RAM/volume/battery cluster, tray |
 | `launcher.rs` | Fullscreen app launcher with glide scrolling |
+| `theme_picker.rs` | Fullscreen theme picker with live preview |
 | `control.rs` | Control center (audio, bluetooth, network, brightness, DnD) |
 | `clipboard.rs` | Clipboard history manager |
 | `notifs.rs` / `toasts.rs` | Notification history + ephemeral toasts |
@@ -52,7 +67,7 @@ other player.
 
 ```bash
 playerctl -l                 # players on the bus
-playerctl -p kumizo play     # drive one directly
+playerctl play               # drive the active player
 kumizo service mpris next    # and through the shell
 ```
 
