@@ -47,6 +47,21 @@ ID86_SWAYFS=1|0 ID86_NVIM=1|0 \
 ID86_SHELL=binary|source|skip ID86_AWWW=binary|source|skip ./setup.sh
 ```
 
+## What gets installed
+
+| Program | Role |
+|---|---|
+| **Kumizo** | full shell: bar, launcher, control center, notifications, clipboard, lockscreen |
+| **Sway** | Wayland compositor |
+| **foot** | terminal |
+| **yazi** / **Thunar** | TUI / graphical file managers |
+| **Neovim** / **Vim** | editors, with the rice config (nvim optional) |
+| **zsh** + oh-my-zsh | default shell |
+| **fzf, bat, eza, fd, ripgrep, zoxide, jq** | daily CLI tools |
+| **awww** + **grim/slurp** | wallpapers / slideshow + screenshots |
+
+`me.sh` adds the author's personal apps (Telegram, mpv, Docker, etc.).
+
 ## Prebuilt binaries
 
 `shell` and `awww` would otherwise need a full Rust toolchain. The
@@ -106,6 +121,11 @@ Available themes: `mocha`, `flexoki-light`, `aurora`, `github-light`, `nord`,
 `change-theme` updates sway, foot, yazi, vim, nvim, GTK, the wallpaper, fzf and
 herdr. Running foot instances reload their colors live (SIGUSR1); font,
 padding and keybind changes still need a restart.
+
+## Limitations
+
+Theme switching is not fully live yet: some programs, such as foot, must be
+restarted for the new theme to apply.
 
 ## Customizing the shell
 
