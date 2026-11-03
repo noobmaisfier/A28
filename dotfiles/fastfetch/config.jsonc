@@ -43,6 +43,11 @@
       "key": "DSK ",
       "keyColor": "37"
     },
+    {
+      "type": "uptime",
+      "key": "UP  ",
+      "keyColor": "37"
+    },
     "break"
   ]
 }
