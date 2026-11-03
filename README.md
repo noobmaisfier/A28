@@ -51,7 +51,7 @@ ID86_SHELL=binary|source|skip ID86_AWWW=binary|source|skip ./setup.sh
 
 | Program | Role |
 |---|---|
-| **Kumizo-kit** | shell built on Kumizo: bar, launcher, control center, notifications, clipboard, lockscreen |
+| **Kumi** | shell built on Kumizo: bar, launcher, control center, notifications, clipboard, lockscreen |
 | **SwayFS** | Wayland compositor (fork of Sway, optional during install) |
 | **foot** | terminal |
 | **yazi** / **Thunar** | TUI / graphical file managers |
