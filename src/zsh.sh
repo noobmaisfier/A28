@@ -21,4 +21,7 @@ for plugin in zsh-completions zsh-autosuggestions zsh-syntax-highlighting; do
     fi
 done
 
-echo "==> zsh setup done (plugins only; .zshrc comes from dotfiles.sh)"
+echo "==> Setting default shell to zsh..."
+chsh -s /usr/bin/zsh
+
+echo "==> zsh setup done"

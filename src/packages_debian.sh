@@ -23,7 +23,8 @@ pkg_deb build-essential curl pkg-config git \
     fonts-noto fonts-noto-cjk fonts-noto-color-emoji fonts-noto-extra \
     fonts-liberation fonts-dejavu fonts-roboto fonts-jetbrains-mono \
     fonts-firacode fonts-hack \
-    fonts-adobe-source-code-pro fonts-adobe-source-sans-pro
+    fonts-adobe-source-code-pro fonts-adobe-source-sans-pro \
+    trash-cli
 
 echo "==> Binary shims (different Debian names)..."
 mkdir -p "$HOME/.local/bin"

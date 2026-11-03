@@ -17,7 +17,7 @@ sudo pacman -Syu --needed --noconfirm base-devel \
     thunar thunar-archive-plugin thunar-media-tags-plugin thunar-volman \
     gvfs gvfs-mtp tumbler ffmpegthumbnailer pavucontrol \
     file-roller gthumb \
-    fontconfig
+    fontconfig trash-cli
 
 # Building the shell (src/shell.sh): rust + native deps.
 # The shell is a GPU/wayland/pam binary, not a rice package.
